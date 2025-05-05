@@ -1,0 +1,181 @@
+{
+    "Set Data": {
+        "prefix": [
+            "set"
+        ],
+        "body": [
+            "set ${1:SET_NAME} := ${2:Element};"
+        ],
+        "description": "The data for a set"
+    },
+    "Set Declaration": {
+        "prefix": [
+            "set"
+        ],
+        "body": [
+            "set ${1:SET_NAME};"
+        ],
+        "description": "Declares a set"
+    },
+    "Param Scalar": {
+        "prefix": [
+            "param"
+        ],
+        "body": [
+            "param ${1:Name} := ${2:Value};"
+        ],
+        "description": "The data for a single parameter"
+    },
+    "Param Array": {
+        "prefix": [
+            "param"
+        ],
+        "body": [
+            "param ${1:Name} :=",
+            "${2:Element} ${3:Value}",
+            ";"
+        ],
+        "description": "The data for an indexed parameter"
+    },
+    "Param Multiple": {
+        "prefix": [
+            "param"
+        ],  
+        "body": [
+            "param: ${1:Name1} ${2:Name2} :=",
+            "${3:Element} ${4:Value1} ${5:Value2}",
+            ";"
+        ],
+        "description": "Defines several indexed parameters over the same set"
+    },
+    "Param Data Table": {
+        "prefix": [
+            "param"
+        ],
+        "body": [
+            "param ${1:Name} :",
+            "\t\t\t${2:Element1}\t${3:Element2} :=",
+            "${4:Element3}\t${5:Value1}\t\t${6:Value2}",
+            ";"
+        ],
+        "description": "Simple table layout"
+    },
+    "Param Declaration": {
+        "prefix": [
+            "param"
+        ],
+        "body": [
+            "param ${1:Name} {${2:SET}};"
+        ],
+        "description": "Declares a parameter"
+    },
+    "Variable": {
+        "prefix": [
+            "var"
+        ],
+        "body": [
+            "var ${1:Name} {i in ${2:SET}};"
+        ],
+        "description": "Simple variable definition"
+    },
+    "Minimize": {
+        "prefix": [
+            "minimize"
+        ],
+        "body": [
+            "minimize Objective:",
+            "\tsum{i in ${1:SET}} ${2:Var}[i]",
+            ";"
+        ],
+        "description": "Minimization objective function"
+    },
+    "Maximize": {
+        "prefix": [
+            "maximize"
+        ],
+        "body": [
+            "maximize Objective:",
+            "\tsum{i in ${1:SET}} ${2:Var}[i]",
+            ";"
+        ],
+        "description": "Maximization objective function"
+    },
+    "Constraint": {
+        "prefix": [
+            "subject to"
+        ],
+        "body": [
+            "subject to ${1:Constraint} {i in ${2:SET1}}:",
+            "\tsum{j in ${3:SET2}} ${4:Var}[i,j] <= ${5:Param}[i]",
+            ";"
+        ],
+        "description": "Adds a constraint to the model"
+    },
+    "For Loop": {
+        "prefix": [
+            "for"
+        ],
+        "body": [
+            "for {i in ${1:SET}} {",
+            "\t$0",
+            "};"
+        ],
+        "description": "Iterate over the elements of a set"
+    },
+    "Repeat While Loop": {
+        "prefix": [
+            "repeat",
+            "while"
+        ],
+        "body": [
+            "repeat {",
+            "\t$0",
+            "} while ${1:Condition};"
+        ]
+    },
+    "While Loop": {
+        "prefix": [
+            "repeat",
+            "while"
+        ],
+        "body": [
+            "repeat while ${1:Condition} {",
+            "\t$0",
+            "};"
+        ]
+    },
+    "Repeat Until Loop": {
+        "prefix": [
+            "repeat",
+            "until"
+        ],
+        "body": [
+            "repeat {",
+            "\t$0",
+            "} until ${1:Condition};"
+        ]
+    },
+    "Until Loop": {
+        "prefix": [
+            "repeat",
+            "until"
+        ],
+        "body": [
+            "repeat until ${1:Condition} {",
+            "\t$0",
+            "};"
+        ]
+    },
+    "If Statement": {
+        "prefix": [
+            "if"
+        ],
+        "body": [
+            "if ${1:Condition} then {",
+            "\t$0",
+            "} else {",
+            "\t",
+            "};"
+        ]
+    }
+}

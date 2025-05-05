@@ -1,0 +1,291 @@
+{
+	"name": "ampl-plugin-official",   
+	"displayName": "AMPL (Official)",
+	"publisher": "AMPLOptimizationInc",
+	"description": "AMPL Language Support with Language Server",
+	"version": "0.0.2",
+	"engines": {
+		"vscode": "^1.90.0"
+	},
+	"repository": {
+			"type": "git",
+			"url": "https://github.com/mapgccv/ampllsp.git"
+	},
+
+	"main": "./out/extension.js",
+	"categories": [
+		"Programming Languages"
+	],
+	"icon": "resources/logo.png",
+	"contributes": {
+		"languages": [
+			{
+				"id": "vsampl",
+				"aliases": ["AMPL", "ampl"],
+				"extensions": [".mod", ".run", ".ampl"],
+				"configuration": "./language-configuration.json"
+			  },
+			  {
+				"id": "vsampl-dat",
+				"aliases": ["AMPL Data", "ampl-dat"],
+				"extensions": [".dat"],
+				"configuration": "./language-configuration.json"
+			  }
+		],
+		"debuggers": [
+			{
+				"type": "amplProject",
+				"label": "AMPL Project",
+				"languages": [
+					"vsampl"
+				],
+				"configurationAttributes": {
+					"launch": {
+						"properties": {
+							"fileList": {
+								"type": "array",
+								"description": "List of files to be parsed by the AMPL binary.",
+								"items": {
+									"type": "string",
+									"description": "The path to a file"
+								},
+								"default": []
+							}
+						}
+					}
+				},
+				"configurationSnippets": [
+					{
+						"label": "AMPL: define project",
+						"description": "Run and parse a set of AMPL files with the AMPL binary",
+						"body": {
+							"name": "Project name",
+							"type": "amplProject",
+							"request": "launch",
+							"fileList": [
+								"${workspaceFolder}/examples/file1.ampl",
+								"${workspaceFolder}/examples/file2.ampl"
+							]
+						}
+					}
+				]
+			}
+		],
+		"iconThemes": [
+			{
+				"id": "vsampl-icons",
+				"label": "AMPL",
+				"path": "./resources/ampl-icon-theme.json"
+			}
+		],
+	"grammars": [
+			{
+			  "language": "vsampl",
+			  "scopeName": "source.vsampl",
+			  "path": "./syntaxes/ampl.tmLanguage.json"
+			},
+			{
+			  "language": "vsampl-dat",
+			  "scopeName": "source.vsampl.dat",
+			  "path": "./syntaxes/ampl-dat.tmLanguage.json"
+			}
+		  ],
+		"snippets": [
+			{
+				"language": "vsampl",
+				"path": "./snippets/ampl.json"
+			}
+		],
+		"menus": {
+			
+			"explorer/context": [
+				{
+					"command": "vsampl.runFile",
+					"title": "Send to AMPL",
+					"when": "editorTextFocus && editorLangId == vsampl",
+					"group": "ampl"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "vsampl.runFile",
+					"title": "Send to AMPL",
+					"when": "editorTextFocus && editorLangId == vsampl",
+					"group": "ampl"
+				},
+				{
+					"command": "vsampl.displayEntity",
+					"title": "Display entity in AMPL",
+					"when": "editorTextFocus && editorLangId == vsampl",
+					"group": "ampl"
+				},
+				{
+					"command" : "vsampl.lmconvert",
+					"when": "editorTextFocus && editorLangId == python",
+					"group": "ampl",
+					"title" : "Convert to AMPL"
+				}
+			],
+			"editor/title/run": [
+				{
+					"command": "vsampl.runFile",
+					"group": "navigation",
+					"when": "editorLangId == vsampl",
+					"title": "Send to AMPL"
+				}
+			]
+		},
+		"terminal": {
+			"profiles": [
+				{
+					"id": "vsampl.shell",
+					"title": "AMPL"
+				}
+			]
+		},
+		"keybindings": [
+			{
+				"command": "vsampl.runFile",
+				"key": "ctrl+enter",
+				"mac": "cmd+enter",
+				"when": "editorTextFocus && editorLangId == 'vsampl'"
+			},
+			{
+				"command": "vsampl.displayEntity",
+				"key": "ctrl+l",
+				"mac" :"cmd+l",
+				"when": "editorTextFocus && editorLangId == 'vsampl'"
+			}
+		],
+		"commands": [
+		
+		
+				{
+					"command": "vsampl.lmconvert",
+					"title": "Convert to AMPL",
+					"icon": "$(comment)"
+				},
+			{
+				"command": "vsampl.selectConfiguration",
+				"title": "AMPL: Select launch configuration",
+				"when": "onContext:vsampl.enableBetaCommands",
+				"enablement": "vsampl.enableBetaCommands"
+			},
+			{
+				"command": "vsampl.selectFilesToParse",
+				"title": "AMPL: Select files to parse",
+				"enablement": "vsampl.enableBetaCommands"
+			},
+			{
+				"command": "vsampl.displayEntity",
+				"title": "AMPL: display entity"
+			},
+			{
+				"command": "vsampl.openConsole",
+				"title": "AMPL: open console"
+			},
+			{
+				"command": "vsampl.runFile",
+				"title": "AMPL: interpret file",
+				"icon": "$(play)"
+			},
+			{
+				"command": "vsampl.solve",
+				"title": "AMPL: solve",
+				"icon": "$(play)",
+				"shortTitle": "Solve"
+			},
+			{
+				"command": "vsampl.reset",
+				"title": "AMPL: reset",
+				"icon": "$(trash)",
+				"shortTitle": "Reset"
+			}
+		],
+"configuration": [
+	{
+		"title": "AMPL › Runtime",
+		"properties": {
+		  "vsampl.pathToAMPLbinary": {
+			"type": "string",
+			"default": "",
+			"description": "Path to the AMPL binary. If empty, the extension will look for it in system paths.",
+			"title": "Path to AMPL Binary"
+		  },
+		  "vsampl.changeDirectoryOnRun": {
+			"type": "boolean",
+			"default": true,
+			"description": "Change the working directory of AMPL to the directory of the file being run."
+		  }
+		}
+	  },
+
+  	{
+    "title": "AMPL › Language server",
+    "properties": {
+      "AMPL.LanguageServer.enableLanguageServer": {
+        "type": "boolean",
+        "default": true,
+        "description": "Enable or disable the language server for AMPL files."
+      },
+      "AMPLlanguageserver.trace.server": {
+        "type": "string",
+        "enum": ["off", "messages", "verbose"],
+        "default": "off",
+        "description": "Trace the communication between VS Code and the AMPL language server."
+      },
+	  "vsampl.diagnosticsEnabled": {
+        "type": "boolean",
+        "default": true,
+        "description": "Enable or disable error highlighting for AMPL files. Requires the language server."
+      }
+    }
+  },
+
+
+  {
+    "title": "AMPL › Advanced",
+    "properties": {
+
+      "vsampl.enablePsuedoTerminal": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable or disable the advanced pseudoterminal. Has more features but can be unstable."
+      },
+      "vsampl.enableAdvancedCommands": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable advanced and beta features like custom configuration and file selection commands."
+      }
+    }
+  }
+  
+]
+
+	},
+	"dependencies": {
+		"jsonc-parser": "^3.3.1",
+		"vscode-languageclient": "9.0.1"
+	},
+	"scripts": {
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/mocha": "^10.0.8",
+		"@types/node": "22.x",
+		"@types/vscode": "^1.90.0",
+		"@typescript-eslint/eslint-plugin": "^8.5.0",
+		"@typescript-eslint/parser": "^8.5.0",
+		"@vscode/test-electron": "^2.4.1",
+		"@vscode/vsce": "^3.1.0",
+		"eslint": "^9.10.0",
+		"mocha": "^10.7.3",
+		"path": "0.12.7",
+		"typescript": "^5.6.2",
+		"yarn": "1.22.22"
+	}
+}

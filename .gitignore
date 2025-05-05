@@ -1,0 +1,12 @@
+/out
+/reference
+.settings/
+.vscode/
+settings.json
+.DS_Store
+package-lock.json
+._.DS_Store
+node_modules
+*.vsix
+.DS_Store
+._.DS_Store

@@ -1,0 +1,49 @@
+{
+    "name": "vsampl-dat",
+    "scopeName": "source.vsampl.dat",
+    "fileTypes": ["dat"],
+    "patterns": [
+      { "include": "#comments" },
+      { "include": "#strings" },
+      { "include": "#numbers" },
+      { "include": "#keywords" },
+      { "include": "#operators" },
+      { "include": "#curlyBrackets" },
+      { "include": "#squareBrackets" }
+    ],
+    "repository": {
+      "comments": {
+        "patterns": [
+          { "name": "comment.line.number-sign.ampl", "match": "#.*$" },
+          { "name": "comment.block.ampl", "begin": "/\\*", "end": "\\*/" }
+        ]
+      },
+      "strings": {
+        "patterns": [
+          { "name": "string.quoted.double.ampl", "begin": "\"", "end": "\"" },
+          { "name": "string.quoted.single.ampl", "begin": "'", "end": "'" }
+        ]
+      },
+      "numbers": {
+        "name": "constant.numeric.ampl",
+        "match": "\\b\\d+(\\.\\d+)?([eE]-?\\d+)?\\b"
+      },
+      "keywords": {
+        "name": "keyword.declaration.ampl",
+        "match": "\\b(set|param|var|data|problem|environ|restore)\\b"
+      },
+      "operators": {
+        "name": "keyword.operator.ampl",
+        "match": "(\\+|-|\\*|\\/|\\*\\*|=|<=?|>=?|==|\\||\\^|<|>|!|\\.\\.|:=|&|!=|:|/|==>|<==|<==>|\\bor\\b|\\band\\b)"
+      },
+      "curlyBrackets": {
+        "name": "punctuation.bracket.curly.ampl",
+        "match": "[{}]"
+      },
+      "squareBrackets": {
+        "name": "punctuation.bracket.square.ampl",
+        "match": "[\\[\\]]"
+      }
+    },
+    "uuid": "7d9ee45c-39c8-4c42-9d29-18b9b3da88a3"
+}
