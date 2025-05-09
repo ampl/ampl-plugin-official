@@ -69,8 +69,9 @@ valid constructs are flagged as errors, please disable diagnostic with:
 
 ## Contact us
 
-Provide feedback TODO Link to google group?
-File questions, issues, or feature requests for the extension. TODO Link to github?
+File questions, issues, or feature requests for the extension by:
+- Emailing us at [support@ampl.com](mailto:support@ampl.com)
+- Filing an issue on [GitHub Issues](https://github.com/ampl/ampl-plugin-official/issues)
 
 ---
 
