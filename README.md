@@ -61,7 +61,6 @@ valid constructs are flagged as errors, please disable diagnostic with:
 |----------------------------------|-----------------------------------------------------------------------------|
 | `vsampl.pathToAMPLbinary`        | Path to the AMPL binary. If empty, the extension will look for it in system paths. |
 | `vsampl.changeDirectoryOnRun`    | Change the working directory of AMPL to the directory of the file being run. |
-|----------------------------------|----------------------------------------------------------------------------|
 | `vsampl.diagnosticsEnabled`      | Enable or disable diagnostic from the language server                       |
 ---
 
