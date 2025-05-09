@@ -9,7 +9,7 @@
 	},
 	"repository": {
 			"type": "git",
-			"url": "https://github.com/mapgccv/ampllsp.git"
+			"url": "https://github.com/ampl/ampl-plugin-official.git"
 	},
 
 	"main": "./out/extension.js",
@@ -22,7 +22,7 @@
 			{
 				"id": "vsampl",
 				"aliases": ["AMPL", "ampl"],
-				"extensions": [".mod", ".run", ".ampl"],
+				"extensions": [".mod", ".run", ".ampl", ".inc"],
 				"configuration": "./language-configuration.json"
 			  },
 			  {
@@ -102,7 +102,7 @@
 				{
 					"command": "vsampl.runFile",
 					"title": "Send to AMPL",
-					"when": "editorTextFocus && editorLangId == vsampl",
+					"when": "editorTextFocus && (editorLangId == vsampl || editorLangId == vsampl-dat)",
 					"group": "ampl"
 				}
 			],
@@ -110,13 +110,13 @@
 				{
 					"command": "vsampl.runFile",
 					"title": "Send to AMPL",
-					"when": "editorTextFocus && editorLangId == vsampl",
+					"when": "editorTextFocus && (editorLangId == vsampl || editorLangId == vsampl-dat)",
 					"group": "ampl"
 				},
 				{
 					"command": "vsampl.displayEntity",
 					"title": "Display entity in AMPL",
-					"when": "editorTextFocus && editorLangId == vsampl",
+					"when": "editorTextFocus && (editorLangId == vsampl || editorLangId == vsampl-dat)",
 					"group": "ampl"
 				},
 				{
@@ -130,7 +130,7 @@
 				{
 					"command": "vsampl.runFile",
 					"group": "navigation",
-					"when": "editorLangId == vsampl",
+					"when": "(editorLangId == vsampl || editorLangId == vsampl-dat)",
 					"title": "Send to AMPL"
 				}
 			]
@@ -148,18 +148,29 @@
 				"command": "vsampl.runFile",
 				"key": "ctrl+enter",
 				"mac": "cmd+enter",
-				"when": "editorTextFocus && editorLangId == 'vsampl'"
+				"when": "editorTextFocus && (editorLangId == vsampl || editorLangId == vsampl-dat)"
 			},
 			{
 				"command": "vsampl.displayEntity",
 				"key": "ctrl+l",
 				"mac" :"cmd+l",
-				"when": "editorTextFocus && editorLangId == 'vsampl'"
+				"when": "editorTextFocus && (editorLangId == vsampl || editorLangId == vsampl-dat)"
 			}
 		],
 		"commands": [
 		
-		
+			{
+                "command": "vsampl.checkLanguageServerConfiguration",
+                "title": "Check Language Server Configuration"
+            },
+            {
+                "command": "vsampl.autodetectJava",
+                "title": "Autodetect Java Runtime"
+            },
+            {
+                "command": "vsampl.selectJavaFolder",
+                "title": "Select Java Folder"
+            },
 				{
 					"command": "vsampl.lmconvert",
 					"title": "Convert to AMPL",
@@ -211,6 +222,13 @@
 			"default": "",
 			"description": "Path to the AMPL binary. If empty, the extension will look for it in system paths.",
 			"title": "Path to AMPL Binary"
+		  },
+		  "vsampl.pathToJRE": {
+			"type": "string",
+			"default": "",
+			"description": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.",
+			"title": "Path to JRE",
+			"markdownDescription": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.\n\n- [Check Configuration](command:vsampl.checkLanguageServerConfiguration)\n- [Autodetect Java](command:vsampl.autodetectJava)\n- [Select Java Folder](command:vsampl.selectJavaFolder)"
 		  },
 		  "vsampl.changeDirectoryOnRun": {
 			"type": "boolean",

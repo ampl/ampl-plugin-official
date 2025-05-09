@@ -46,8 +46,14 @@ export function sendToPipe(what: string){
 export function createAMPLPty(start: boolean = false): vscode.Pseudoterminal | undefined {
   writeEmitter = new vscode.EventEmitter<string>();
 
-  let amplPath = utils.amplPath
-if (amplPath == undefined) return undefined;
+  const amplPath = utils.getAmplPath();
+  if (!amplPath) {
+    vscode.window.showErrorMessage("AMPL binary path could not be resolved.");
+    return undefined;
+  }
+  // Create the pipe but don't start it immediately
+pipe = new AMPLAPI(amplPath, ["-b"]);
+
 
   // Create the pipe but don't start it immediately
 pipe = new AMPLAPI(amplPath, ["-b"]);

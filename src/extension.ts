@@ -12,166 +12,184 @@ import { registerLMCommands } from './lmconvert';
 import { integer, LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node';
 
 export let client: LanguageClient;
-// This method is called when your extension is activated 
 
+// Entry point
 export function activate(context: vscode.ExtensionContext) {
-	registerCommands(context);
-	if (options.useLanguageServer()) activateLanguageServer(context);
-
-	const config = vscode.workspace.getConfiguration("vsampl");
-	const advanced = config.get<boolean>("enableAdvancedCommands", false);
-	vscode.commands.executeCommand("setContext", "vsampl.enableBetaCommands", advanced);
-
-	vscode.workspace.onDidChangeConfiguration(e => {
-		if (e.affectsConfiguration("vsampl.enableAdvancedCommands")) {
-		  const advanced = vscode.workspace.getConfiguration("vsampl").get("enableAdvancedCommands", false);
-		  vscode.commands.executeCommand("setContext", "vsampl.enableBetaCommands", advanced);
-		}
-	  });
-	  
+    initializeExtension(context).catch((error) => {
+        console.error("Failed to initialize the extension:", error);
+        vscode.window.showErrorMessage("Failed to initialize the AMPL extension. Check the console for details.");
+    });
 }
+
+async function initializeExtension(context: vscode.ExtensionContext) {
+    
+        // Initialize AMPL and Java paths
+        await utils.initializeAmplPath();
+        if (options.useLanguageServer()) await utils.initializeJavaPath();
+
+        // Optionally log the paths for debugging
+        const amplPath = utils.getAmplPath();
+        const javaPath = utils.getJavaPath();
+        console.log(`AMPL Path: ${amplPath}`);
+        console.log(`Java Path: ${javaPath}`);
+
+        // Check if paths are initialized properly
+        if (!amplPath) {
+            vscode.window.showErrorMessage("AMPL binary path could not be resolved. Some features may not work.");
+        }
+        if (!javaPath) {
+            vscode.window.showErrorMessage("Java Runtime Environment (JRE) path could not be resolved. Advanced features may not work.");
+        }
+
+        // Register commands and other features
+        registerCommands(context);
+        if (options.useLanguageServer()) {
+            activateLanguageServer(context);
+        }
+
+        // Handle advanced commands configuration
+        const config = vscode.workspace.getConfiguration("vsampl");
+        const advanced = config.get<boolean>("enableAdvancedCommands", false);
+        vscode.commands.executeCommand("setContext", "vsampl.enableBetaCommands", advanced);
+
+        utils.checkForConflictingExtensions(); 
+
+}
+
 
 
 // Register commands for the extension
 function registerCommands(context: vscode.ExtensionContext) {
-	vscode.commands.registerCommand('vsampl.selectFilesToParse', async () => {
-		const selectedFiles = await pr.selectFilesToParse();
-		if (selectedFiles && selectedFiles.length > 0) {
-			await pr.saveFilesToConfig(selectedFiles);
-		}
-	})
-	context.subscriptions.push(
-		vscode.commands.registerCommand('vsampl.selectConfiguration', async () => {
-			await pr.selectConfiguration();
-		})
-	);
-	vscode.workspace.onDidChangeConfiguration((e) => {
-		if (e.affectsConfiguration('vscode.filesToParse')) {
-			const updatedFilesToParse = vscode.workspace
-				.getConfiguration('vsampl')
-				.get<string[]>('filesToParse');
 
-			// Send the updated list to the language server
-			client.sendNotification('workspace/didChangeConfiguration', {
-				filesToParse: updatedFilesToParse
-			});
-		}
-	});
+    // Java and language server commands
+    context.subscriptions.push(vscode.commands.registerCommand('vsampl.autodetectJava',
+        utils.autoDetectJavaPath));
+    context.subscriptions.push(vscode.commands.registerCommand('vsampl.selectJavaFolder',
+        utils.selectJavaFolder));
+    context.subscriptions.push(vscode.commands.registerCommand('vsampl.checkLanguageServerConfiguration',
+        utils.cmdCheckLanguageServerConfiguration));
 
-	context.subscriptions.push(vscode.commands.registerCommand(
-		"vsampl.openConsole", getAmplConsole));
+    // Advanced commands (disabled by default)
+    context.subscriptions.push(vscode.commands.registerCommand('vsampl.selectFilesToParse', async () => {
+        const selectedFiles = await pr.selectFilesToParse();
+        if (selectedFiles && selectedFiles.length > 0) {
+            await pr.saveFilesToConfig(selectedFiles);
+        }
+    }));
+    context.subscriptions.push(
+        vscode.commands.registerCommand('vsampl.selectConfiguration', async () => {
+            await pr.selectConfiguration();
+        })
+    );
 
-	registerRunCommands(context);
-	registerTerminalProfile(context);
-	registerLMCommands(context);
+    // React to configuration changes
+    vscode.workspace.onDidChangeConfiguration((e) => {
+        if (e.affectsConfiguration('vscode.filesToParse')) {
+            const updatedFilesToParse = vscode.workspace
+                .getConfiguration('vsampl')
+                .get<string[]>('filesToParse');
+            // Send the updated list to the language server
+            client.sendNotification('workspace/didChangeConfiguration', {
+                filesToParse: updatedFilesToParse
+            });
+        }
+        if (e.affectsConfiguration("vsampl.pathToJRE")) {
+            utils.resetJavaPath();
+        }
+        if (e.affectsConfiguration("vsampl.enableAdvancedCommands")) {
+            const advanced = vscode.workspace.getConfiguration("vsampl").get("enableAdvancedCommands", false);
+            vscode.commands.executeCommand("setContext", "vsampl.enableBetaCommands", advanced);
+        }
+    });
+
+    context.subscriptions.push(vscode.commands.registerCommand(
+        "vsampl.openConsole", getAmplConsole));
+
+    registerRunCommands(context);
+    registerTerminalProfile(context);
+    registerLMCommands(context);
 
 }
 
-function activateLanguageServer(context: vscode.ExtensionContext) {
-	// Name of the launcher class which contains the main.
-	const main: string = 'amplls.StdioLauncher';
+async function activateLanguageServer(context: vscode.ExtensionContext) {
+    const outputChannel = vscode.window.createOutputChannel("AMPL Language Server");
+    outputChannel.appendLine("Starting language server...");
 
-	// Get the java home from the process environment.
-	const JAVA_HOME = utils.findJavaExe();
-	if (JAVA_HOME == undefined) {
-		console.log("Could not find Java. Advanced editor functionalities disabled.");
-		return;
-	}
-	console.log(`Using java from JAVA_HOME: ${JAVA_HOME}`);
-	// If java home is available continue.
-	if (JAVA_HOME) {
-		// Java execution path.
-		let excecutable: string = JAVA_HOME;
+    const javaBin = utils.getJavaPath();
+    if (!javaBin) {
+        vscode.window.showErrorMessage("Could not find Java. Advanced editor functionalities disabled.");
+        outputChannel.appendLine("Could not find Java. Advanced editor functionalities disabled.");
+        return;
+    }
 
-		// path to the launcher.jar
-		let classPath = path.join(__dirname, '..', 'libs', 'lib-all.jar');
+    const classPath = path.join(__dirname, '..', 'libs', 'lib-all.jar');
+    const args: string[] = ['-cp', classPath, 'amplls.StdioLauncher'];
 
-		console.log(`executing ${classPath}`)
-		const args: string[] = ['-cp', classPath];
+    const serverOptions: ServerOptions = {
+        run: {
+            command: javaBin,
+            args: args,
+            options: {}
+        },
+        debug: {
+            command: javaBin,
+            args: args,
+            options: {}
+        }
+    };
 
-		let serverOptions: ServerOptions = {
-			command: excecutable,
-			args: [...args, main],
-			options: {}
-		};
-		const diagnosticsEnabled = options.diagnosticsEnabled()
+    const clientOptions: LanguageClientOptions = {
+        documentSelector: [{ scheme: 'file', language: 'vsampl' }],
+        initializationOptions: {
+            diagnosticsEnabled: options.diagnosticsEnabled()
+        },
+        synchronize: {
+            configurationSection: 'vsampl'
+        },
+        outputChannel // Redirect language server output to the output channel
+    };
 
-		// Options to control the language client
-		let clientOptions: LanguageClientOptions = {
-			// Register the server for AMPL files
-			documentSelector: [{ scheme: 'file', language: 'vsampl' }],
-			initializationOptions: {
-				diagnosticsEnabled: diagnosticsEnabled
-			},
-			synchronize: {
-				configurationSection: 'vsampl'
-			}
-		};
+    client = new LanguageClient('AMPLlanguageserver', 'AMPL Language Server', serverOptions, clientOptions);
 
-		// Create the language client and start the client.
-		client = new LanguageClient('AMPLlanguageserver', 'AMPL Language Server', serverOptions, clientOptions)
-
-		// When a file is opened or saved, send a notification to the server
-		vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
-			sendBaseDocumentNotification(document);
-		});
-
-		vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
-			sendBaseDocumentNotification(document);
-		});
-
-		vscode.workspace.onDidChangeConfiguration((e) => {
-			if (e.affectsConfiguration('vsampl.filesToParse')) {
-				const updatedFilesToParse = vscode.workspace
-					.getConfiguration('vsampl')
-					.get<string[]>('filesToParse');
-				// Send the updated configuration to the language server
-				client.sendNotification('workspace/didChangeConfiguration', {
-					settings: { filesToParse: updatedFilesToParse }
-				});
-			}
-		});
-
-		client.start();
-
-
-		// Function to send the base document content via notification
-		function sendBaseDocumentNotification(document: vscode.TextDocument) {
-			const baseDocumentUri = document.uri;
-			client.sendNotification('custom/baseDocument', {
-				path: baseDocumentUri.path
-			});
-		}
-	}
+    try {
+        await client.start();
+        outputChannel.appendLine("Language server is ready.");
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        vscode.window.showErrorMessage(
+            `Failed to start the language server. Java interpreter: ${javaBin}. Error: ${errorMessage}`
+        );
+        outputChannel.appendLine(`Failed to start the language server. Error: ${errorMessage}`);
+    }
 }
 
 
 function registerTerminalProfile(context: vscode.ExtensionContext) {
-	const usePseudo = vscode.workspace.getConfiguration('vsampl').get<boolean>('enablePsuedoTerminal', false);
+    const usePseudo = vscode.workspace.getConfiguration('vsampl').get<boolean>('enablePsuedoTerminal', false);
 
-	const provider: vscode.TerminalProfileProvider = {
-		provideTerminalProfile(): vscode.ProviderResult<vscode.TerminalProfile> {
-			const terminalOptions = new ap.AMPLTerminal("AMPL").terminalOptions;
+    const provider: vscode.TerminalProfileProvider = {
+        provideTerminalProfile(): vscode.ProviderResult<vscode.TerminalProfile> {
+            const terminalOptions = new ap.AMPLTerminal("AMPL").terminalOptions;
 
-			if (usePseudo) {
-				const pty = pt.createAMPLPty(true);
-				if (!pty) {
-					vscode.window.showErrorMessage("AMPL executable not found. Cannot create pseudo terminal.");
-					return undefined;
-				}
+            if (usePseudo) {
+                const pty = pt.createAMPLPty(true);
+                if (!pty) {
+                    vscode.window.showErrorMessage("AMPL executable not found. Cannot create pseudo terminal.");
+                    return undefined;
+                }
 
-				return new vscode.TerminalProfile({
-					...terminalOptions,  // reuse name, iconPath, color
-					pty                  // override shellPath/shellArgs with pty
-				});
-			} else {
-				return new vscode.TerminalProfile(terminalOptions);
-			}
-		}
-	};
-	context.subscriptions.push(
-		vscode.window.registerTerminalProfileProvider('vsampl.shell', provider)
-	);
+                return new vscode.TerminalProfile({
+                    ...terminalOptions,  // reuse name, iconPath, color
+                    pty                  // override shellPath/shellArgs with pty
+                });
+            } else {
+                return new vscode.TerminalProfile(terminalOptions);
+            }
+        }
+    };
+    context.subscriptions.push(
+        vscode.window.registerTerminalProfileProvider('vsampl.shell', provider)
+    );
 }
 
 
@@ -189,13 +207,13 @@ function getAMPLTerminalSingleton(): vscode.Terminal | undefined {
  */
 export function getAmplPty(): vscode.Terminal | undefined {
 
-	var terminal = vscode.window.activeTerminal;
-	if (!terminal || terminal.name !== pt.defaultName()) {
-		if(getNAMPLTerminalsOpen() == 1)
-			return getAMPLTerminalSingleton()
-		return pt.createAMPLPseudoTerminal(); // <- now returns Terminal again
-	}
-	return terminal;
+    var terminal = vscode.window.activeTerminal;
+    if (!terminal || terminal.name !== pt.defaultName()) {
+        if (getNAMPLTerminalsOpen() == 1)
+            return getAMPLTerminalSingleton()
+        return pt.createAMPLPseudoTerminal(); // <- now returns Terminal again
+    }
+    return terminal;
 }
 
 /**
@@ -203,19 +221,19 @@ export function getAmplPty(): vscode.Terminal | undefined {
  * @returns {vscode.Terminal} - the ampl console
  */
 export function getAmplConsole(): vscode.Terminal {
-	const terminal = vscode.window.activeTerminal;
+    const terminal = vscode.window.activeTerminal;
 
-	if (!terminal || terminal.name !== "AMPL") {
-		if(getNAMPLTerminalsOpen() == 1) {
-			const singleton = getAMPLTerminalSingleton();
-			if (singleton) return singleton;
-		}
-		const amplTerminal = new ap.AMPLTerminal();
-		const g_terminal = vscode.window.createTerminal(amplTerminal.terminalOptions);
-		g_terminal.show(false);
-		return g_terminal;
-	}
-	return terminal;
+    if (!terminal || terminal.name !== "AMPL") {
+        if (getNAMPLTerminalsOpen() == 1) {
+            const singleton = getAMPLTerminalSingleton();
+            if (singleton) return singleton;
+        }
+        const amplTerminal = new ap.AMPLTerminal();
+        const g_terminal = vscode.window.createTerminal(amplTerminal.terminalOptions);
+        g_terminal.show(false);
+        return g_terminal;
+    }
+    return terminal;
 }
 
 

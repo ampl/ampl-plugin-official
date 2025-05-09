@@ -5,28 +5,27 @@ import * as utils from "./utils"
 
 export class AMPLTerminal {
   /**
-   * name of the terminal
+   * Name of the terminal
    */
   public name: string;
 
-
   /**
-   * terminal options for the AMPL terminal, constructed from the amplPath and executableArgs
+   * Terminal options for the AMPL terminal, constructed from the amplPath and executableArgs
    */
   public terminalOptions: vscode.TerminalOptions;
 
+
   /**
-   * constructor for the AMPLTerminal
-   * @param {string} name - the name of the terminal
+   * Constructor for the AMPLTerminal
+   * @param {string} name - The name of the terminal
    */
   constructor(name?: string) {
-    
     this.name = name || "AMPL";
     this.terminalOptions = {
       name: this.name,
-      shellPath: utils.amplPath,
+      shellPath: utils.getAmplPath(), // Placeholder, will be set asynchronously
       iconPath: vscode.Uri.file(path.join(__filename, '..', '..', 'resources', 'logo.png')),
-      color: new vscode.ThemeColor("terminal.ansiBlue")
-       };
+      color: new vscode.ThemeColor("terminal.ansiBlue"),
+    };
   }
 }

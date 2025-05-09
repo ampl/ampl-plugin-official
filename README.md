@@ -71,15 +71,7 @@ valid constructs are flagged as errors, please disable diagnostic with:
 Provide feedback TODO Link to google group?
 File questions, issues, or feature requests for the extension. TODO Link to github?
 
-
-
-
-## Contributing
-TODO is it open source?
-We welcome contributions! Please see our [Contributing Guide](https://github.com/your-repo/ampl-vscode-extension/blob/main/CONTRIBUTING.md).
-
 ---
 
 ## License
-TODO License?
-This extension is licensed under the [MIT License](https://github.com/your-repo/ampl-vscode-extension/blob/main/LICENSE).
+This extension is licensed under the [MIT License](https://github.com/ampl/ampl-plugin-official/blob/main/LICENSE).
