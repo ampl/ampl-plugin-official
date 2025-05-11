@@ -2,15 +2,15 @@
 
 ![AMPL Logo](resources/logo.png)
 
-The AMPL VS Code Extension provides language support for AMPL, including syntax highlighting and integration with the AMPL runtime. 
+The AMPL VS Code Extension provides language support for AMPL, including syntax highlighting and integration with the AMPL runtime.
 
 ---
 
-## Features
+## Basic Features
 
 ### 1. Syntax Highlighting
-Enjoy full syntax highlighting for `.mod`, `.run`, and `.dat` files. Highlighting for `.dat`files is basic, to support big file sizes. 
-◊
+Enjoy full syntax highlighting for `.mod`, `.run`, and `.dat` files. Note that highlighting for `.dat`files is simplified, to support big file sizes. 
+
 ![Syntax Highlighting](resources/syntax-highlight.png)
 
 ---
@@ -20,19 +20,36 @@ Quickly run `.mod` or `.run` files directly from the editor.
 
 ![Run Files](resources/run-file.png)
 
----
 
 ### 3. Display entities and expressions
 Select any entity or expression in the editor to display them in the AMPL runtime.
 
 ![Outline Context Menu](resources/outline-context-menu.png)
 
+
+### 4. Streamlined keyboard shortcuts
+Most used AMPL commands have keyboard shortcuts and can be accessed by the command palette:
+- `run` - send current file to AMPL 
+- `reset` - reset the current session
+- `solve` - solve the model
+
 ---
 
-### 4. AMPL Language Server
-Get diagnostics, outline, autocompletion, hovering support and more with the AMPL Language Server. 
-Note that the language server is in beta version and some language features might be missing; in case 
-valid constructs are flagged as errors, please disable diagnostic with:
+
+## Language Server Features
+
+### 1. Declarations support
+- Hover over an entity declared in the current file to see its declaration
+- Right click or press F12 for "go to definition"
+- Tokenized syntax highlighting to support distinction for functions and variables.
+
+### 3. Outline view
+Get a list of symbols in the current file in the outline view
+
+![Outline](resources/outline.png)
+
+### 4. Diagnostics
+Errors are higlighted and listed in the "Problems" window in VS code. Note that the language server is currently under development, therefore some language features might be missing; in case valid constructs are flagged as errors, please disable diagnostic.
 
 ![Diagnostics](resources/diagnostics.png)
 
@@ -44,6 +61,7 @@ valid constructs are flagged as errors, please disable diagnostic with:
 |-----------------------|------------------|----------------------------|
 | Run File              | `Cmd+Enter`     | `Ctrl+Enter`               |
 | Display Entity        | `Cmd+L`         | `Ctrl+L`                   |
+| Reset                 | `Cmd+R`         | `Ctrl+R`                   |
 
 ---
 
@@ -58,11 +76,16 @@ valid constructs are flagged as errors, please disable diagnostic with:
 
 ### Settings
 
-| Setting                          | Description                                                                 |
-|----------------------------------|-----------------------------------------------------------------------------|
-| `vsampl.pathToAMPLbinary`        | Path to the AMPL binary. If empty, the extension will look for it in system paths. |
-| `vsampl.changeDirectoryOnRun`    | Change the working directory of AMPL to the directory of the file being run. |
-| `vsampl.diagnosticsEnabled`      | Enable or disable diagnostic from the language server                       |
+| Setting                                       | Description                                                                                       |
+|-----------------------------------------------|---------------------------------------------------------------------------------------------------|
+| `AMPL.pathToAMPLbinary`                       | Path to the AMPL binary. If empty, the extension will look for it in system paths.                |
+| `AMPL.pathToJRE`                              | Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths. |
+| `AMPL.changeDirectoryOnRun`                   | Change the working directory of AMPL to the directory of the file being run.                      |
+| `AMPL.LanguageServer.enableLanguageServer`    | Enable or disable the language server for AMPL files.                                             |
+| `AMPL.LanguageServer.trace.server`            | Trace the communication between VS Code and the AMPL language server.                             |
+| `AMPL.LanguageServer.diagnosticsEnabled`      | Enable or disable error highlighting for AMPL files. Requires the language server.                |
+| `AMPL.Advanced.enablePsuedoTerminal`          | Enable or disable the advanced pseudoterminal. Has more features but can be unstable.             |
+| `AMPL.Advanced.enableAdvancedCommands`        | Enable advanced and beta features like custom configuration and file selection commands.          |
 
 ---
 

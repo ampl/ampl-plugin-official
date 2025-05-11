@@ -10,7 +10,7 @@ let javaPath: string | undefined = undefined;
  * Initializes the AMPL path and stores it in a global variable.
  */
 export async function initializeAmplPath(): Promise<void> {
-    amplPath = await vscode.workspace.getConfiguration("vsampl").get<string>("pathToAMPLbinary") || await findAmplBinary();
+    amplPath = await vscode.workspace.getConfiguration("AMPL").get<string>("pathToAMPLbinary") || await findAmplBinary();
 }
 
 /**
@@ -20,7 +20,7 @@ export async function initializeJavaPath(force: boolean = false): Promise<void> 
     if (force) {
         javaPath = await findJava(amplPath);
     } else
-    javaPath = await vscode.workspace.getConfiguration("vsampl").get<string>("pathToJRE") || await findJava(amplPath);
+    javaPath = await vscode.workspace.getConfiguration("AMPL").get<string>("pathToJRE") || await findJava(amplPath);
 }
 export function resetJavaPath() {
     javaPath = undefined;
@@ -81,7 +81,7 @@ export async function findAmplBinary(): Promise<string | undefined> {
                     const selectedPath = selectedFiles[0].fsPath;
 
                     // Save the selected path to the settings
-                    const config = vscode.workspace.getConfiguration("vsampl");
+                    const config = vscode.workspace.getConfiguration("AMPL");
                     await config.update("pathToAMPLbinary", selectedPath, vscode.ConfigurationTarget.Global);
 
                     vscode.window.showInformationMessage(`Selected AMPL binary saved: ${selectedPath}`);
@@ -147,7 +147,7 @@ export async function findJava(amplPath: string | undefined): Promise<string | u
         const selectedPath = selectedFiles[0].fsPath;
 
         // Save the selected path to the settings
-        const config = vscode.workspace.getConfiguration("vsampl");
+        const config = vscode.workspace.getConfiguration("AMPL");
         await config.update("pathToJRE", selectedPath, vscode.ConfigurationTarget.Global);
 
         vscode.window.showInformationMessage(`Selected Java executable saved: ${selectedPath}`);
@@ -189,6 +189,7 @@ async function findExtensionsForFileExtension(ext: string): Promise<string | und
         if (Array.isArray(contributedLanguages)) {
             for (const lang of contributedLanguages) {
                 if (Array.isArray(lang.extensions) && lang.extensions.includes(ext)) {
+                    if(extension.id === "AMPLOptimizationInc.ampl-plugin-official") continue;
                     // Skip the vscode.xml plugin for .mod files
                     if (ext === '.mod' && extension.id === 'vscode.xml') {
                         continue;
@@ -337,7 +338,7 @@ export async function selectJavaFolder() {
         
             if (selectedFolder && selectedFolder.length > 0) {
                 const javaBin = path.join(selectedFolder[0].fsPath, 'bin', 'java');
-                await vscode.workspace.getConfiguration("vsampl").update("pathToJRE", javaBin, vscode.ConfigurationTarget.Global);
+                await vscode.workspace.getConfiguration("AMPL").update("pathToJRE", javaBin, vscode.ConfigurationTarget.Global);
                 vscode.window.showInformationMessage(`Java Runtime set to: ${javaBin}`);
                 // Force refresh of the settings UI
                 await vscode.commands.executeCommand('workbench.action.openSettings', '@ext:AMPLOptimizationInc.ampl-plugin-official');
@@ -349,11 +350,11 @@ export async function selectJavaFolder() {
         }
 
 export async function autoDetectJavaPath() {
-     vscode.workspace.getConfiguration("vsampl").update("pathToJRE", undefined, vscode.ConfigurationTarget.Global);
+     vscode.workspace.getConfiguration("AMPL").update("pathToJRE", undefined, vscode.ConfigurationTarget.Global);
      await initializeJavaPath(true); // Implement logic to autodetect Java
             const javaBin = getJavaPath();
             if (javaBin) {1
-                await vscode.workspace.getConfiguration("vsampl").update("pathToJRE", javaBin, vscode.ConfigurationTarget.Global);
+                await vscode.workspace.getConfiguration("AMPL").update("pathToJRE", javaBin, vscode.ConfigurationTarget.Global);
                 vscode.window.showInformationMessage(`Java Runtime detected and set to: ${javaBin}`);
                 // Force refresh of the settings UI
                 await vscode.commands.executeCommand('workbench.action.openSettings', '@ext:AMPLOptimizationInc.ampl-plugin-official');

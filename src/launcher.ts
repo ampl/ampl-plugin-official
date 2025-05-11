@@ -66,7 +66,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 export function activateCmd(context: vscode.ExtensionContext) {
     // Register the command
-    const disposable = vscode.commands.registerCommand('vsampl.addFileToConfiguration', async (uri: vscode.Uri) => {
+    const disposable = vscode.commands.registerCommand('ampl.addFileToConfiguration', async (uri: vscode.Uri) => {
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
         
         if (!workspaceFolder) {

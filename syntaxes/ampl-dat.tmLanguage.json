@@ -1,6 +1,6 @@
 {
-    "name": "vsampl-dat",
-    "scopeName": "source.vsampl.dat",
+    "name": "ampl-dat",
+    "scopeName": "source.ampl.dat",
     "fileTypes": ["dat"],
     "patterns": [
       { "include": "#comments" },

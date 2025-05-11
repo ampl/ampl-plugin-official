@@ -1,5 +1,5 @@
-{ "name": "vsampl",
-  "scopeName": "source.vsampl",
+{ "name": "ampl",
+  "scopeName": "source.ampl",
   "fileTypes": ["mod", "run", ".ampl"],
   "repository": {
     "general":  {

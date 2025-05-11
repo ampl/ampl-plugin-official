@@ -2,12 +2,11 @@ import * as vscode from 'vscode';
 
 
 export function diagnosticsEnabled() : boolean {
-    return  vscode.workspace.getConfiguration('vsampl').get<boolean>('diagnostics.enabled', false);
+    return  vscode.workspace.getConfiguration('AMPL').get<boolean>('LanguageServer.diagnosticsEnabled', false);
 }
 
-
 export function usePseudoTerminal() : boolean{
-	return vscode.workspace.getConfiguration('vsampl').get<boolean>('enablePsuedoTerminal', false);
+	return vscode.workspace.getConfiguration('AMPL').get<boolean>('Advanced.enablePsuedoTerminal', false);
 }
 
 export function useLanguageServer() : boolean { 
@@ -15,6 +14,6 @@ export function useLanguageServer() : boolean {
 }
 
 export function changeDirOnRun() : boolean {
-    const config = vscode.workspace.getConfiguration('vsampl');
+    const config = vscode.workspace.getConfiguration('AMPL');
     return config.get<boolean>('changeDirectoryOnRun', true);
 }

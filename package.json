@@ -20,14 +20,14 @@
 	"contributes": {
 		"languages": [
 			{
-				"id": "vsampl",
-				"aliases": ["AMPL", "ampl"],
+				"id": "ampl",
+				"aliases": ["AMPL"],
 				"extensions": [".mod", ".run", ".ampl", ".inc"],
 				"configuration": "./language-configuration.json"
 			  },
 			  {
-				"id": "vsampl-dat",
-				"aliases": ["AMPL Data", "ampl-dat"],
+				"id": "ampl-dat",
+				"aliases": ["AMPL Data"],
 				"extensions": [".dat"],
 				"configuration": "./language-configuration.json"
 			  }
@@ -37,7 +37,7 @@
 				"type": "amplProject",
 				"label": "AMPL Project",
 				"languages": [
-					"vsampl"
+					"ampl"
 				],
 				"configurationAttributes": {
 					"launch": {
@@ -73,26 +73,26 @@
 		],
 		"iconThemes": [
 			{
-				"id": "vsampl-icons",
+				"id": "ampl-icons",
 				"label": "AMPL",
 				"path": "./resources/ampl-icon-theme.json"
 			}
 		],
 	"grammars": [
 			{
-			  "language": "vsampl",
-			  "scopeName": "source.vsampl",
+			  "language": "ampl",
+			  "scopeName": "source.ampl",
 			  "path": "./syntaxes/ampl.tmLanguage.json"
 			},
 			{
-			  "language": "vsampl-dat",
-			  "scopeName": "source.vsampl.dat",
+			  "language": "ampl-dat",
+			  "scopeName": "source.ampl.dat",
 			  "path": "./syntaxes/ampl-dat.tmLanguage.json"
 			}
 		  ],
 		"snippets": [
 			{
-				"language": "vsampl",
+				"language": "ampl",
 				"path": "./snippets/ampl.json"
 			}
 		],
@@ -100,27 +100,27 @@
 			
 			"explorer/context": [
 				{
-					"command": "vsampl.runFile",
+					"command": "AMPL.runFile",
 					"title": "Send to AMPL",
-					"when": "editorTextFocus && (editorLangId == vsampl || editorLangId == vsampl-dat)",
+					"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)",
 					"group": "ampl"
 				}
 			],
 			"editor/context": [
 				{
-					"command": "vsampl.runFile",
+					"command": "AMPL.runFile",
 					"title": "Send to AMPL",
-					"when": "editorTextFocus && (editorLangId == vsampl || editorLangId == vsampl-dat)",
+					"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)",
 					"group": "ampl"
 				},
 				{
-					"command": "vsampl.displayEntity",
+					"command": "AMPL.displayEntity",
 					"title": "Display entity in AMPL",
-					"when": "editorTextFocus && (editorLangId == vsampl || editorLangId == vsampl-dat)",
+					"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)",
 					"group": "ampl"
 				},
 				{
-					"command" : "vsampl.lmconvert",
+					"command" : "AMPL.lmconvert",
 					"when": "editorTextFocus && editorLangId == python",
 					"group": "ampl",
 					"title" : "Convert to AMPL"
@@ -128,9 +128,9 @@
 			],
 			"editor/title/run": [
 				{
-					"command": "vsampl.runFile",
+					"command": "AMPL.runFile",
 					"group": "navigation",
-					"when": "(editorLangId == vsampl || editorLangId == vsampl-dat)",
+					"when": "(editorLangId == ampl || editorLangId == ampl-dat)",
 					"title": "Send to AMPL"
 				}
 			]
@@ -138,76 +138,84 @@
 		"terminal": {
 			"profiles": [
 				{
-					"id": "vsampl.shell",
+					"id": "AMPL.shell",
 					"title": "AMPL"
 				}
 			]
 		},
 		"keybindings": [
 			{
-				"command": "vsampl.runFile",
-				"key": "ctrl+enter",
-				"mac": "cmd+enter",
-				"when": "editorTextFocus && (editorLangId == vsampl || editorLangId == vsampl-dat)"
+				"command": "AMPL.runFile",
+				"key": "ctrl+shift+enter",
+				"mac": "cmd+shift+enter",
+				"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)"
 			},
 			{
-				"command": "vsampl.displayEntity",
-				"key": "ctrl+l",
-				"mac" :"cmd+l",
-				"when": "editorTextFocus && (editorLangId == vsampl || editorLangId == vsampl-dat)"
+
+				"command": "AMPL.displayEntity",
+				"key": "ctrl+shift+d",
+				"mac" :"cmd+d",
+				"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)"
+			},
+			{
+				"command": "AMPL.reset",
+				"key": "ctrl+shift+r",
+				"mac" :"cmd+shift+r",
+				"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)"
 			}
+
 		],
 		"commands": [
 		
 			{
-                "command": "vsampl.checkLanguageServerConfiguration",
+                "command": "AMPL.checkLanguageServerConfiguration",
                 "title": "Check Language Server Configuration"
             },
             {
-                "command": "vsampl.autodetectJava",
+                "command": "AMPL.autotedectJava",
                 "title": "Autodetect Java Runtime"
             },
             {
-                "command": "vsampl.selectJavaFolder",
+                "command": "AMPL.selectJavaFolder",
                 "title": "Select Java Folder"
             },
 				{
-					"command": "vsampl.lmconvert",
+					"command": "AMPL.lmconvert",
 					"title": "Convert to AMPL",
 					"icon": "$(comment)"
 				},
 			{
-				"command": "vsampl.selectConfiguration",
+				"command": "AMPL.selectConfiguration",
 				"title": "AMPL: Select launch configuration",
-				"when": "onContext:vsampl.enableBetaCommands",
-				"enablement": "vsampl.enableBetaCommands"
+				"when": "onContext:AMPL.enableBetaCommands",
+				"enablement": "AMPL.enableBetaCommands"
 			},
 			{
-				"command": "vsampl.selectFilesToParse",
+				"command": "AMPL.selectFilesToParse",
 				"title": "AMPL: Select files to parse",
-				"enablement": "vsampl.enableBetaCommands"
+				"enablement": "AMPL.enableBetaCommands"
 			},
 			{
-				"command": "vsampl.displayEntity",
+				"command": "AMPL.displayEntity",
 				"title": "AMPL: display entity"
 			},
 			{
-				"command": "vsampl.openConsole",
+				"command": "AMPL.openConsole",
 				"title": "AMPL: open console"
 			},
 			{
-				"command": "vsampl.runFile",
-				"title": "AMPL: interpret file",
+				"command": "AMPL.runFile",
+				"title": "AMPL: run file",
 				"icon": "$(play)"
 			},
 			{
-				"command": "vsampl.solve",
+				"command": "AMPL.solve",
 				"title": "AMPL: solve",
 				"icon": "$(play)",
 				"shortTitle": "Solve"
 			},
 			{
-				"command": "vsampl.reset",
+				"command": "AMPL.reset",
 				"title": "AMPL: reset",
 				"icon": "$(trash)",
 				"shortTitle": "Reset"
@@ -217,20 +225,20 @@
 	{
 		"title": "AMPL › Runtime",
 		"properties": {
-		  "vsampl.pathToAMPLbinary": {
+		  "AMPL.pathToAMPLbinary": {
 			"type": "string",
 			"default": "",
 			"description": "Path to the AMPL binary. If empty, the extension will look for it in system paths.",
 			"title": "Path to AMPL Binary"
 		  },
-		  "vsampl.pathToJRE": {
+		  "AMPL.pathToJRE": {
 			"type": "string",
 			"default": "",
 			"description": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.",
 			"title": "Path to JRE",
-			"markdownDescription": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.\n\n- [Check Configuration](command:vsampl.checkLanguageServerConfiguration)\n- [Autodetect Java](command:vsampl.autodetectJava)\n- [Select Java Folder](command:vsampl.selectJavaFolder)"
+			"markdownDescription": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.\n\n- [Check Configuration](command:AMPL.checkLanguageServerConfiguration)\n- [Autodetect Java](command:AMPL.autotedectJava)\n- [Select Java Folder](command:AMPL.selectJavaFolder)"
 		  },
-		  "vsampl.changeDirectoryOnRun": {
+		  "AMPL.changeDirectoryOnRun": {
 			"type": "boolean",
 			"default": true,
 			"description": "Change the working directory of AMPL to the directory of the file being run."
@@ -246,13 +254,13 @@
         "default": true,
         "description": "Enable or disable the language server for AMPL files."
       },
-      "AMPLlanguageserver.trace.server": {
+      "AMPL.LanguageServer.trace.server": {
         "type": "string",
         "enum": ["off", "messages", "verbose"],
         "default": "off",
         "description": "Trace the communication between VS Code and the AMPL language server."
       },
-	  "vsampl.diagnosticsEnabled": {
+	  "AMPL.LanguageServer.diagnosticsEnabled": {
         "type": "boolean",
         "default": true,
         "description": "Enable or disable error highlighting for AMPL files. Requires the language server."
@@ -265,12 +273,12 @@
     "title": "AMPL › Advanced",
     "properties": {
 
-      "vsampl.enablePsuedoTerminal": {
+      "AMPL.Advanced.enablePsuedoTerminal": {
         "type": "boolean",
         "default": false,
         "description": "Enable or disable the advanced pseudoterminal. Has more features but can be unstable."
       },
-      "vsampl.enableAdvancedCommands": {
+      "AMPL.Advanced.enableAdvancedCommands": {
         "type": "boolean",
         "default": false,
         "description": "Enable advanced and beta features like custom configuration and file selection commands."

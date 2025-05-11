@@ -48,9 +48,9 @@ async function initializeExtension(context: vscode.ExtensionContext) {
         }
 
         // Handle advanced commands configuration
-        const config = vscode.workspace.getConfiguration("vsampl");
-        const advanced = config.get<boolean>("enableAdvancedCommands", false);
-        vscode.commands.executeCommand("setContext", "vsampl.enableBetaCommands", advanced);
+        const config = vscode.workspace.getConfiguration("AMPL");
+        const advanced = config.get<boolean>("Advanced.enableAdvancedCommands", false);
+        vscode.commands.executeCommand("setContext", "AMPL.enableBetaCommands", advanced);
 
         utils.checkForConflictingExtensions(); 
 
@@ -62,22 +62,22 @@ async function initializeExtension(context: vscode.ExtensionContext) {
 function registerCommands(context: vscode.ExtensionContext) {
 
     // Java and language server commands
-    context.subscriptions.push(vscode.commands.registerCommand('vsampl.autodetectJava',
+    context.subscriptions.push(vscode.commands.registerCommand('AMPL.autotedectJava',
         utils.autoDetectJavaPath));
-    context.subscriptions.push(vscode.commands.registerCommand('vsampl.selectJavaFolder',
+    context.subscriptions.push(vscode.commands.registerCommand('AMPL.selectJavaFolder',
         utils.selectJavaFolder));
-    context.subscriptions.push(vscode.commands.registerCommand('vsampl.checkLanguageServerConfiguration',
+    context.subscriptions.push(vscode.commands.registerCommand('AMPL.checkLanguageServerConfiguration',
         utils.cmdCheckLanguageServerConfiguration));
 
     // Advanced commands (disabled by default)
-    context.subscriptions.push(vscode.commands.registerCommand('vsampl.selectFilesToParse', async () => {
+    context.subscriptions.push(vscode.commands.registerCommand('AMPL.selectFilesToParse', async () => {
         const selectedFiles = await pr.selectFilesToParse();
         if (selectedFiles && selectedFiles.length > 0) {
             await pr.saveFilesToConfig(selectedFiles);
         }
     }));
     context.subscriptions.push(
-        vscode.commands.registerCommand('vsampl.selectConfiguration', async () => {
+        vscode.commands.registerCommand('ampl.selectConfiguration', async () => {
             await pr.selectConfiguration();
         })
     );
@@ -86,24 +86,24 @@ function registerCommands(context: vscode.ExtensionContext) {
     vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('vscode.filesToParse')) {
             const updatedFilesToParse = vscode.workspace
-                .getConfiguration('vsampl')
+                .getConfiguration('AMPL')
                 .get<string[]>('filesToParse');
             // Send the updated list to the language server
             client.sendNotification('workspace/didChangeConfiguration', {
                 filesToParse: updatedFilesToParse
             });
         }
-        if (e.affectsConfiguration("vsampl.pathToJRE")) {
+        if (e.affectsConfiguration("AMPL.pathToJRE")) {
             utils.resetJavaPath();
         }
-        if (e.affectsConfiguration("vsampl.enableAdvancedCommands")) {
-            const advanced = vscode.workspace.getConfiguration("vsampl").get("enableAdvancedCommands", false);
-            vscode.commands.executeCommand("setContext", "vsampl.enableBetaCommands", advanced);
+        if (e.affectsConfiguration("AMPL.Advanced.enableAdvancedCommands")) {
+            const advanced = vscode.workspace.getConfiguration("AMPL").get("enableAdvancedCommands", false);
+            vscode.commands.executeCommand("setContext", "AMPL.enableBetaCommands", advanced);
         }
     });
 
     context.subscriptions.push(vscode.commands.registerCommand(
-        "vsampl.openConsole", getAmplConsole));
+        "ampl.openConsole", getAmplConsole));
 
     registerRunCommands(context);
     registerTerminalProfile(context);
@@ -139,12 +139,12 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
     };
 
     const clientOptions: LanguageClientOptions = {
-        documentSelector: [{ scheme: 'file', language: 'vsampl' }],
+        documentSelector: [{ scheme: 'file', language: 'ampl' }],
         initializationOptions: {
             diagnosticsEnabled: options.diagnosticsEnabled()
         },
         synchronize: {
-            configurationSection: 'vsampl'
+            configurationSection: 'ampl'
         },
         outputChannel // Redirect language server output to the output channel
     };
@@ -165,7 +165,7 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
 
 
 function registerTerminalProfile(context: vscode.ExtensionContext) {
-    const usePseudo = vscode.workspace.getConfiguration('vsampl').get<boolean>('enablePsuedoTerminal', false);
+    const usePseudo = vscode.workspace.getConfiguration('AMPL').get<boolean>('Advanced.enablePsuedoTerminal', false);
 
     const provider: vscode.TerminalProfileProvider = {
         provideTerminalProfile(): vscode.ProviderResult<vscode.TerminalProfile> {
@@ -188,7 +188,7 @@ function registerTerminalProfile(context: vscode.ExtensionContext) {
         }
     };
     context.subscriptions.push(
-        vscode.window.registerTerminalProfileProvider('vsampl.shell', provider)
+        vscode.window.registerTerminalProfileProvider('AMPL.shell', provider)
     );
 }
 

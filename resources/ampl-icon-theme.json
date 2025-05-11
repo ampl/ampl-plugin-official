@@ -17,10 +17,11 @@
         "mod" : "_ampl_model",
         "dat" : "_ampl_data",
         "run" : "_ampl_run",
+        "ampl" : "_ampl_model",
     },
     "languageIds" : {
-        "mod" : "vsampl",
-        "dat" : "vsampl",
-        "run" : "vsampl"
-    }
+        "mod" : "ampl",
+        "dat" : "ampl-dat",
+        "run" : "ampl",
+        "ampl" : "ampl"    }
   }

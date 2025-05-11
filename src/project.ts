@@ -122,6 +122,6 @@ export async function selectConfiguration(): Promise<void> {
 export function useConfigurationFiles(filesToParse: string[]): void {
     // Send the updated configuration to the language server
     client.sendNotification('workspace/didChangeConfiguration', {
-        settings: { vsampl: { filesToParse: filesToParse } }
+        settings: { ampl: { filesToParse: filesToParse } }
     });
 }

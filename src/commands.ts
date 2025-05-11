@@ -7,14 +7,14 @@ import {getOpenedFolder} from './utils';
 
 export function registerRunCommands(context: vscode.ExtensionContext) {
     context.subscriptions.push(
-        vscode.commands.registerCommand('vsampl.runFile', runFile),
-        vscode.commands.registerCommand('vsampl.solve', () => {
+        vscode.commands.registerCommand('AMPL.runFile', runFile),
+        vscode.commands.registerCommand('AMPL.solve', () => {
             sendCommandToTerminal("solve;");
         }),
-        vscode.commands.registerCommand('vsampl.reset', () => {
+        vscode.commands.registerCommand('AMPL.reset', () => {
             sendCommandToTerminal("reset;");
         }),
-        vscode.commands.registerCommand('vsampl.displayEntity', () => {
+        vscode.commands.registerCommand('AMPL.displayEntity', () => {
             displayEntity();
         })
         
