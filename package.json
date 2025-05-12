@@ -162,6 +162,12 @@
 				"key": "ctrl+shift+r",
 				"mac" :"cmd+shift+r",
 				"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)"
+			},
+			{
+				"command": "AMPL.solve",
+				"key": "ctrl+shift+l",
+				"mac" :"cmd+shift+l",
+				"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)"
 			}
 
 		],

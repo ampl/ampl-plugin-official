@@ -4,6 +4,8 @@
 
 The AMPL VS Code Extension provides language support for AMPL, including syntax highlighting and integration with the AMPL runtime.
 
+![Animation](resources/Animation.gif)
+
 ---
 
 ## Basic Features
@@ -24,14 +26,13 @@ Quickly run `.mod` or `.run` files directly from the editor.
 ### 3. Display entities and expressions
 Select any entity or expression in the editor to display them in the AMPL runtime.
 
-![Outline Context Menu](resources/outline-context-menu.png)
-
 
 ### 4. Streamlined keyboard shortcuts
 Most used AMPL commands have keyboard shortcuts and can be accessed by the command palette:
 - `run` - send current file to AMPL 
 - `reset` - reset the current session
 - `solve` - solve the model
+- `display expression` - choose an arbitrary expression and evaluate it in AMPL
 
 ---
 
@@ -57,11 +58,12 @@ Errors are higlighted and listed in the "Problems" window in VS code. Note that 
 
 ## Keybindings
 
-| Command               | Keybinding (Mac) | Keybinding (Windows/Linux) |
-|-----------------------|------------------|----------------------------|
-| Run File              | `Cmd+Enter`     | `Ctrl+Enter`               |
-| Display Entity        | `Cmd+L`         | `Ctrl+L`                   |
-| Reset                 | `Cmd+R`         | `Ctrl+R`                   |
+| Command               | Keybinding (Mac)  | Keybinding (Windows/Linux) |
+|-----------------------|-------------------|----------------------------|
+| Run File              | `Cmd+Shift+Enter` | `Ctrl+Shift+Enter`         |
+| Display Entity        | `Cmd+Shift+L`     | `Ctrl+Shift+D`             |
+| Reset                 | `Cmd+Shift+R`     | `Ctrl+Shift+R`             |
+| Solve                 | `Ctrl+Shift+L`    | `Ctrl+Shift+L`             |  
 
 ---
 

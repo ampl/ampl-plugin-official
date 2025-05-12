@@ -44,7 +44,6 @@ function displayEntity(): void {
 
         if (text.trim()) {
             sendCommandToTerminal(`display ${text};`);
-            vscode.window.showInformationMessage(`Expression: ${text}`);
         } else {
             vscode.window.showWarningMessage("No valid expression selected or found.");
         }
