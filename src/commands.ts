@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as pt from './pseudoterminal';
 import { getAmplConsole, getAmplPty } from './extension'; // assuming these are exported from extension.ts
-import { usePseudoTerminal, changeDirOnRun} from './options';
+import * as options from './options';
 import {getOpenedFolder} from './utils';
 
 export function registerRunCommands(context: vscode.ExtensionContext) {
@@ -114,7 +114,7 @@ function runFile(): void {
 }
 
 function sendCommandToTerminal(command : string): void {
-    if (usePseudoTerminal()) {
+    if (options.getUsePseudoTerminal()) {
         const terminal = getAmplPty();
         if (!terminal) return;
         pt.sendToPipe(command);
@@ -132,7 +132,7 @@ function runFileWithTerminal(): void {
 
     const document = editor.document;
     document.save();
-    const changeDir = changeDirOnRun()
+    const changeDir = options.getChangeDirOnRun();
     let filePathToSend: string;
     if (changeDir) {
         const folder = path.dirname(document.fileName);

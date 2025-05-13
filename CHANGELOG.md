@@ -1,9 +1,11 @@
 # Change Log
 
-All notable changes to the "amplls" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+[Unreleased]
 
-## [Unreleased]
+- Moved configuration items in `AMPL` to `AMPL.Runtime`
 
-- Initial release
+
+[0.0.6]
+
+- Initial alpha release

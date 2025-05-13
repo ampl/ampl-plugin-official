@@ -25,7 +25,7 @@ async function initializeExtension(context: vscode.ExtensionContext) {
     
         // Initialize AMPL and Java paths
         await utils.initializeAmplPath();
-        if (options.useLanguageServer()) await utils.initializeJavaPath();
+        if (options.getUseLanguageServer()) await utils.initializeJavaPath();
 
         // Optionally log the paths for debugging
         const amplPath = utils.getAmplPath();
@@ -43,13 +43,12 @@ async function initializeExtension(context: vscode.ExtensionContext) {
 
         // Register commands and other features
         registerCommands(context);
-        if (options.useLanguageServer()) {
+        if (options.getUseLanguageServer()) {
             activateLanguageServer(context);
         }
 
         // Handle advanced commands configuration
-        const config = vscode.workspace.getConfiguration("AMPL");
-        const advanced = config.get<boolean>("Advanced.enableAdvancedCommands", false);
+        const advanced = options.getEnableAdvancedCommands();
         vscode.commands.executeCommand("setContext", "AMPL.enableBetaCommands", advanced);
 
         utils.checkForConflictingExtensions(); 
@@ -93,12 +92,18 @@ function registerCommands(context: vscode.ExtensionContext) {
                 filesToParse: updatedFilesToParse
             });
         }
-        if (e.affectsConfiguration("AMPL.pathToJRE")) {
+        if (e.affectsConfiguration("AMPL.Runtime.pathToJRE")) {
             utils.resetJavaPath();
         }
         if (e.affectsConfiguration("AMPL.Advanced.enableAdvancedCommands")) {
-            const advanced = vscode.workspace.getConfiguration("AMPL").get("enableAdvancedCommands", false);
+            const advanced = options.getEnableAdvancedCommands();
             vscode.commands.executeCommand("setContext", "AMPL.enableBetaCommands", advanced);
+        } 
+        if( e.affectsConfiguration("AMPL.LanguageServer.diagnosticsEnabled")) {
+            const diagnosticsEnabled = options.getDiagnosticsEnabled();
+            client.sendNotification('workspace/didChangeConfiguration', {
+                diagnosticsEnabled: diagnosticsEnabled
+            });
         }
     });
 
@@ -141,7 +146,7 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'ampl' }],
         initializationOptions: {
-            diagnosticsEnabled: options.diagnosticsEnabled()
+            diagnosticsEnabled: options.getDiagnosticsEnabled()
         },
         synchronize: {
             configurationSection: 'ampl'
@@ -165,8 +170,7 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
 
 
 function registerTerminalProfile(context: vscode.ExtensionContext) {
-    const usePseudo = vscode.workspace.getConfiguration('AMPL').get<boolean>('Advanced.enablePsuedoTerminal', false);
-
+    const usePseudo = options.getUsePseudoTerminal();
     const provider: vscode.TerminalProfileProvider = {
         provideTerminalProfile(): vscode.ProviderResult<vscode.TerminalProfile> {
             const terminalOptions = new ap.AMPLTerminal("AMPL").terminalOptions;
