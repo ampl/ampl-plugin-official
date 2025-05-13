@@ -102,20 +102,18 @@
 				{
 					"command": "AMPL.runFile",
 					"title": "Send to AMPL",
-					"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)",
+					"when": "resourceExtname == .mod || resourceExtname == .run || resourceExtname == .ampl || resourceExtname == .inc || resourceExtname == .dat",
 					"group": "ampl"
 				}
 			],
 			"editor/context": [
 				{
 					"command": "AMPL.runFile",
-					"title": "Send to AMPL",
 					"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)",
 					"group": "ampl"
 				},
 				{
 					"command": "AMPL.displayEntity",
-					"title": "Display entity in AMPL",
 					"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)",
 					"group": "ampl"
 				},
@@ -130,7 +128,7 @@
 				{
 					"command": "AMPL.runFile",
 					"group": "navigation",
-					"when": "(editorLangId == ampl || editorLangId == ampl-dat)",
+					"when": "editorLangId == ampl || editorLangId == ampl-dat",
 					"title": "Send to AMPL"
 				}
 			]
@@ -187,12 +185,12 @@
             },
 				{
 					"command": "AMPL.lmconvert",
-					"title": "Convert to AMPL",
+					"title": "Convert To AMPL",
 					"icon": "$(comment)"
 				},
 			{
 				"command": "AMPL.selectConfiguration",
-				"title": "AMPL: Select launch configuration",
+				"title": "AMPL: Select Launch Configuration",
 				"when": "onContext:AMPL.enableBetaCommands",
 				"enablement": "AMPL.enableBetaCommands"
 			},
@@ -203,26 +201,26 @@
 			},
 			{
 				"command": "AMPL.displayEntity",
-				"title": "AMPL: display entity"
+				"title": "AMPL: Display Entity"
 			},
 			{
 				"command": "AMPL.openConsole",
-				"title": "AMPL: open console"
+				"title": "AMPL: Open Console"
 			},
 			{
 				"command": "AMPL.runFile",
-				"title": "AMPL: run file",
+				"title": "AMPL: Run File",
 				"icon": "$(play)"
 			},
 			{
 				"command": "AMPL.solve",
-				"title": "AMPL: solve",
+				"title": "AMPL: Solve",
 				"icon": "$(play)",
 				"shortTitle": "Solve"
 			},
 			{
 				"command": "AMPL.reset",
-				"title": "AMPL: reset",
+				"title": "AMPL: Reset",
 				"icon": "$(trash)",
 				"shortTitle": "Reset"
 			}
