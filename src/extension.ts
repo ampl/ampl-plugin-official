@@ -22,7 +22,8 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 async function initializeExtension(context: vscode.ExtensionContext) {
-    
+
+        
         // Initialize AMPL and Java paths
         await utils.initializeAmplPath();
         if (options.getUseLanguageServer()) await utils.initializeJavaPath();
@@ -44,9 +45,10 @@ async function initializeExtension(context: vscode.ExtensionContext) {
         // Register commands and other features
         registerCommands(context);
         if (options.getUseLanguageServer()) {
-            activateLanguageServer(context);
+            await activateLanguageServer(context);
         }
 
+        registerRunCommands(context);
         // Handle advanced commands configuration
         const advanced = options.getEnableAdvancedCommands();
         vscode.commands.executeCommand("setContext", "AMPL.enableBetaCommands", advanced);
@@ -59,6 +61,8 @@ async function initializeExtension(context: vscode.ExtensionContext) {
 
 // Register commands for the extension
 function registerCommands(context: vscode.ExtensionContext) {
+
+ 
 
     // Java and language server commands
     context.subscriptions.push(vscode.commands.registerCommand('AMPL.autotedectJava',
@@ -108,9 +112,7 @@ function registerCommands(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(vscode.commands.registerCommand(
-        "ampl.openConsole", getAmplConsole));
-
-    registerRunCommands(context);
+        "AMPL.openConsole", getAmplConsole));
     registerTerminalProfile(context);
     registerLMCommands(context);
 
@@ -119,6 +121,8 @@ function registerCommands(context: vscode.ExtensionContext) {
 async function activateLanguageServer(context: vscode.ExtensionContext) {
     const outputChannel = vscode.window.createOutputChannel("AMPL Language Server");
     outputChannel.appendLine("Starting language server...");
+    const classPath = path.join(__dirname, '..', 'libs', 'lib-all.jar');
+    const args: string[] = ['-cp', classPath, 'amplls.StdioLauncher'];
 
     const javaBin = utils.getJavaPath();
     if (!javaBin) {
@@ -126,9 +130,10 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
         outputChannel.appendLine("Could not find Java. Advanced editor functionalities disabled.");
         return;
     }
+    if(!await utils.checkLanguageServerConfiguration(javaBin, classPath, outputChannel, true)) 
+        return;
 
-    const classPath = path.join(__dirname, '..', 'libs', 'lib-all.jar');
-    const args: string[] = ['-cp', classPath, 'amplls.StdioLauncher'];
+
 
     const serverOptions: ServerOptions = {
         run: {

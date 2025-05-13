@@ -222,13 +222,14 @@ export function getOpenedFolder(): string | undefined {
 }
 
 
-export async function cmdCheckLanguageServerConfiguration() {
+export async function cmdCheckLanguageServerConfiguration(silent: boolean = false) {
     await initializeJavaPath(false);
     const outputChannel = vscode.window.createOutputChannel("AMPL Language Server");
     const javaBin = await vscode.window.showInputBox({
         prompt: "Check compatibility with the following Java installation:",
         placeHolder: getJavaPath(),
         value: getJavaPath() || ""
+
     });
 
     if (!javaBin) {
@@ -246,52 +247,71 @@ export async function cmdCheckLanguageServerConfiguration() {
  * @param classPath The path to the language server JAR file.
  * @param outputChannel The output channel for logging.
  */
-async function checkLanguageServerConfiguration(
+export async function checkLanguageServerConfiguration(
     javaBin: string,
     classPath: string,
-    outputChannel: vscode.OutputChannel
-): Promise<void> {
-    const args = ['-cp', classPath, 'amplls.StdioLauncher',  '--tentative_start'];
+    outputChannel: vscode.OutputChannel,
+    silent: boolean = false
+): Promise<boolean> {
+    const args = ['-cp', classPath, 'amplls.StdioLauncher', '--tentative_start'];
 
     outputChannel.appendLine("Checking language server configuration...");
     outputChannel.appendLine(`Using Java: ${javaBin}`);
     outputChannel.appendLine(`Class path: ${classPath}`);
 
-    const childProcess = spawn(javaBin, args, { stdio: ['pipe', 'pipe', 'pipe'] });
+    return await new Promise<boolean>((resolve) => {
+        let errorHandled = false;
+        const childProcess = spawn(javaBin, args, { stdio: ['pipe', 'pipe', 'pipe'] });
 
-    childProcess.stderr.on('data', (data: Buffer) => {
-        const errorOutput = data.toString();
-        // Check for UnsupportedClassVersionError in the error output
-        const requiredVersionMatch = errorOutput.match(/class file version (\d+\.\d+)/);
-        const currentVersionMatch = errorOutput.match(/recognizes class file versions up to (\d+\.\d+)/);
+        childProcess.stderr.on('data', (data: Buffer) => {
+            const errorOutput = data.toString();
+            const requiredVersionMatch = errorOutput.match(/class file version (\d+\.\d+)/);
+            const currentVersionMatch = errorOutput.match(/recognizes class file versions up to (\d+\.\d+)/);
 
-        //outputChannel.appendLine(`Language Server Error: ${errorOutput}`);
-        if (requiredVersionMatch && currentVersionMatch) {
-            const requiredClassFileVersion = requiredVersionMatch[1];
-            const currentClassFileVersion = currentVersionMatch[1];
+            if (requiredVersionMatch && currentVersionMatch) {
+                const requiredClassFileVersion = requiredVersionMatch[1];
+                const currentClassFileVersion = currentVersionMatch[1];
 
-            const requiredJavaVersion = mapClassFileVersionToJavaVersion(requiredClassFileVersion);
-            const currentJavaVersion = mapClassFileVersionToJavaVersion(currentClassFileVersion);
-            
-            vscode.window.showErrorMessage(
-                `The configured Java Runtime is version ${currentJavaVersion}, while the AMPL Language Server requires version ${requiredJavaVersion} or higher. Please update your Java installation.`
-            );
-        } else {
-            vscode.window.showErrorMessage(`Language Server Error: ${errorOutput}`);
-        }
-    });
+                const requiredJavaVersion = mapClassFileVersionToJavaVersion(requiredClassFileVersion);
+                const currentJavaVersion = mapClassFileVersionToJavaVersion(currentClassFileVersion);
+                if (!silent)
+                    vscode.window.showErrorMessage(
+                        `The configured Java Runtime is version ${currentJavaVersion}, while the AMPL Language Server requires version ${requiredJavaVersion} or higher. Please update your Java installation.`
+                    );
+                errorHandled = true;
+                resolve(false);
+            } else {
+                vscode.window.showErrorMessage(`Language Server Error: ${errorOutput}`);
+                errorHandled = true;
+                resolve(false);
+            }
+        });
 
-    childProcess.on('exit', (code: number | null) => {
-        if (code === null) {
-            outputChannel.appendLine("Language server process was terminated.");
-            vscode.window.showErrorMessage("Language server process was terminated unexpectedly.");
-        } else if (code !== 0) {
-            outputChannel.appendLine(`Language server exited with code ${code}`);
-            vscode.window.showErrorMessage(`Language server exited unexpectedly with code ${code}`);
-        } else {
-            outputChannel.appendLine("Language server configuration check completed successfully.");
-            vscode.window.showInformationMessage("Language server configuration is valid.");
-        }
+        childProcess.on('exit', (code: number | null) => {
+            if (errorHandled) return; // Already handled in stderr
+            if (code === null) {
+                outputChannel.appendLine("Language server process was terminated.");
+                if (!silent)
+                    vscode.window.showErrorMessage("Language server process was terminated unexpectedly.");
+                resolve(false);
+            } else if (code !== 0) {
+                outputChannel.appendLine(`Language server exited with code ${code}`);
+                if (!silent)
+                    vscode.window.showErrorMessage(`Language server exited unexpectedly with code ${code}`);
+                resolve(false);
+            } else {
+                outputChannel.appendLine("Language server configuration check completed successfully.");
+                if (!silent)
+                    vscode.window.showInformationMessage("Language server configuration is valid.");
+                resolve(true);
+            }
+        });
+
+        childProcess.on('error', (err) => {
+            outputChannel.appendLine(`Failed to start Java process: ${err.message}`);
+            vscode.window.showErrorMessage(`Failed to start Java process: ${err.message}`);
+            resolve(false);
+        });
     });
 }
 
@@ -361,4 +381,3 @@ export async function autoDetectJavaPath() {
                 vscode.window.showErrorMessage("Failed to autodetect Java Runtime. Please set it manually.");
             }
         }
-    

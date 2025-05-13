@@ -1,7 +1,5 @@
 # AMPL Language support
 
-![AMPL Logo](resources/logo.png)
-
 The AMPL VS Code Extension provides language support for AMPL, including syntax highlighting and integration with the AMPL runtime.
 
 ![Animation](resources/Animation.gif)
@@ -44,12 +42,12 @@ Most used AMPL commands have keyboard shortcuts and can be accessed by the comma
 - Right click or press F12 for "go to definition"
 - Tokenized syntax highlighting to support distinction for functions and variables.
 
-### 3. Outline view
+### 2. Outline view
 Get a list of symbols in the current file in the outline view
 
 ![Outline](resources/outline.png)
 
-### 4. Diagnostics
+### 3. Diagnostics
 Errors are higlighted and listed in the "Problems" window in VS code. Note that the language server is currently under development, therefore some language features might be missing; in case valid constructs are flagged as errors, please disable diagnostic.
 
 ![Diagnostics](resources/diagnostics.png)
@@ -70,7 +68,7 @@ Errors are higlighted and listed in the "Problems" window in VS code. Note that 
 ## Installation
 
 1. Install the extension from the [VS Code Marketplace](https://marketplace.visualstudio.com/).
-2. Configure (AMPL is not on the system path) the path to the AMPL binary in the settings.
+2. If AMPL is not on the system path, configure the path to the AMPL binary in the settings.
 
 ---
 
