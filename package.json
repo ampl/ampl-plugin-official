@@ -3,7 +3,7 @@
 	"displayName": "AMPL (Official)",
 	"publisher": "AMPLOptimizationInc",
 	"description": "AMPL Language Support with Language Server",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"engines": {
 		"vscode": "^1.90.0"
 	},
@@ -116,12 +116,6 @@
 					"command": "AMPL.displayEntity",
 					"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)",
 					"group": "ampl"
-				},
-				{
-					"command" : "AMPL.lmconvert",
-					"when": "editorTextFocus && editorLangId == python",
-					"group": "ampl",
-					"title" : "Convert to AMPL"
 				}
 			],
 			"editor/title/run": [
@@ -152,7 +146,7 @@
 
 				"command": "AMPL.displayEntity",
 				"key": "ctrl+shift+d",
-				"mac" :"cmd+d",
+				"mac" :"cmd+shift+d",
 				"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)"
 			},
 			{
