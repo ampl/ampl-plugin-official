@@ -6,3 +6,5 @@ vsc-extension-quickstart.md
 out/test/**
 *.map
 *.ts
+src/**/*.ts
+models/

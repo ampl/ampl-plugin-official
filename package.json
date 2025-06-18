@@ -1,5 +1,5 @@
 {
-	"name": "ampl-plugin-official",   
+	"name": "ampl-plugin-official",
 	"displayName": "AMPL (Official)",
 	"publisher": "AMPLOptimizationInc",
 	"description": "AMPL Language Support with Language Server",
@@ -8,10 +8,9 @@
 		"vscode": "^1.90.0"
 	},
 	"repository": {
-			"type": "git",
-			"url": "https://github.com/ampl/ampl-plugin-official.git"
+		"type": "git",
+		"url": "https://github.com/ampl/ampl-plugin-official.git"
 	},
-
 	"main": "./out/extension.js",
 	"categories": [
 		"Programming Languages"
@@ -21,16 +20,27 @@
 		"languages": [
 			{
 				"id": "ampl",
-				"aliases": ["AMPL"],
-				"extensions": [".mod", ".run", ".ampl", ".inc"],
+				"aliases": [
+					"AMPL"
+				],
+				"extensions": [
+					".mod",
+					".run",
+					".ampl",
+					".inc"
+				],
 				"configuration": "./language-configuration.json"
-			  },
-			  {
+			},
+			{
 				"id": "ampl-dat",
-				"aliases": ["AMPL Data"],
-				"extensions": [".dat"],
+				"aliases": [
+					"AMPL Data"
+				],
+				"extensions": [
+					".dat"
+				],
 				"configuration": "./language-configuration.json"
-			  }
+			}
 		],
 		"debuggers": [
 			{
@@ -78,18 +88,18 @@
 				"path": "./resources/ampl-icon-theme.json"
 			}
 		],
-	"grammars": [
+		"grammars": [
 			{
-			  "language": "ampl",
-			  "scopeName": "source.ampl",
-			  "path": "./syntaxes/ampl.tmLanguage.json"
+				"language": "ampl",
+				"scopeName": "source.ampl",
+				"path": "./syntaxes/ampl.tmLanguage.json"
 			},
 			{
-			  "language": "ampl-dat",
-			  "scopeName": "source.ampl.dat",
-			  "path": "./syntaxes/ampl-dat.tmLanguage.json"
+				"language": "ampl-dat",
+				"scopeName": "source.ampl.dat",
+				"path": "./syntaxes/ampl-dat.tmLanguage.json"
 			}
-		  ],
+		],
 		"snippets": [
 			{
 				"language": "ampl",
@@ -97,7 +107,6 @@
 			}
 		],
 		"menus": {
-			
 			"explorer/context": [
 				{
 					"command": "AMPL.runFile",
@@ -143,45 +152,42 @@
 				"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)"
 			},
 			{
-
 				"command": "AMPL.displayEntity",
 				"key": "ctrl+shift+d",
-				"mac" :"cmd+shift+d",
+				"mac": "cmd+shift+d",
 				"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)"
 			},
 			{
 				"command": "AMPL.reset",
 				"key": "ctrl+shift+r",
-				"mac" :"cmd+shift+r",
+				"mac": "cmd+shift+r",
 				"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)"
 			},
 			{
 				"command": "AMPL.solve",
 				"key": "ctrl+shift+l",
-				"mac" :"cmd+shift+l",
+				"mac": "cmd+shift+l",
 				"when": "editorTextFocus && (editorLangId == ampl || editorLangId == ampl-dat)"
 			}
-
 		],
 		"commands": [
-		
 			{
-                "command": "AMPL.checkLanguageServerConfiguration",
-                "title": "Check Language Server Configuration"
-            },
-            {
-                "command": "AMPL.autotedectJava",
-                "title": "Autodetect Java Runtime"
-            },
-            {
-                "command": "AMPL.selectJavaFolder",
-                "title": "Select Java Folder"
-            },
-				{
-					"command": "AMPL.lmconvert",
-					"title": "Convert To AMPL",
-					"icon": "$(comment)"
-				},
+				"command": "AMPL.checkLanguageServerConfiguration",
+				"title": "Check Language Server Configuration"
+			},
+			{
+				"command": "AMPL.autotedectJava",
+				"title": "Autodetect Java Runtime"
+			},
+			{
+				"command": "AMPL.selectJavaFolder",
+				"title": "Select Java Folder"
+			},
+			{
+				"command": "AMPL.lmconvert",
+				"title": "Convert To AMPL",
+				"icon": "$(comment)"
+			},
 			{
 				"command": "AMPL.selectConfiguration",
 				"title": "AMPL: Select Launch Configuration",
@@ -219,73 +225,71 @@
 				"shortTitle": "Reset"
 			}
 		],
-"configuration": [
-	{
-		"title": "AMPL › Runtime",
-		"properties": {
-		  "AMPL.Runtime.pathToAMPLbinary": {
-			"type": "string",
-			"default": "",
-			"description": "Path to the AMPL binary. If empty, the extension will look for it in system paths.",
-			"title": "Path to AMPL Binary"
-		  },
-		  "AMPL.Runtime.pathToJRE": {
-			"type": "string",
-			"default": "",
-			"description": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.",
-			"title": "Path to JRE",
-			"markdownDescription": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.\n\n- [Check Configuration](command:AMPL.checkLanguageServerConfiguration)\n- [Autodetect Java](command:AMPL.autotedectJava)\n- [Select Java Folder](command:AMPL.selectJavaFolder)"
-		  },
-		  "AMPL.Runtime.changeDirectoryOnRun": {
-			"type": "boolean",
-			"default": true,
-			"description": "Change the working directory of AMPL to the directory of the file being run."
-		  }
-		}
-	  },
-
-  	{
-    "title": "AMPL › Language server",
-    "properties": {
-      "AMPL.LanguageServer.enableLanguageServer": {
-        "type": "boolean",
-        "default": true,
-        "description": "Enable or disable the language server for AMPL files."
-      },
-      "AMPL.LanguageServer.trace.server": {
-        "type": "string",
-        "enum": ["off", "messages", "verbose"],
-        "default": "off",
-        "description": "Trace the communication between VS Code and the AMPL language server."
-      },
-	  "AMPL.LanguageServer.diagnosticsEnabled": {
-        "type": "boolean",
-        "default": true,
-        "description": "Enable or disable error highlighting for AMPL files. Requires the language server."
-      }
-    }
-  },
-
-
-  {
-    "title": "AMPL › Advanced",
-    "properties": {
-
-      "AMPL.Advanced.enablePsuedoTerminal": {
-        "type": "boolean",
-        "default": false,
-        "description": "Enable or disable the advanced pseudoterminal. Has more features but can be unstable."
-      },
-      "AMPL.Advanced.enableAdvancedCommands": {
-        "type": "boolean",
-        "default": false,
-        "description": "Enable advanced and beta features like custom configuration and file selection commands."
-      }
-    }
-  }
-  
-]
-
+		"configuration": [
+			{
+				"title": "AMPL › Runtime",
+				"properties": {
+					"AMPL.Runtime.pathToAMPLbinary": {
+						"type": "string",
+						"default": "",
+						"description": "Path to the AMPL binary. If empty, the extension will look for it in system paths.",
+						"title": "Path to AMPL Binary"
+					},
+					"AMPL.Runtime.pathToJRE": {
+						"type": "string",
+						"default": "",
+						"description": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.",
+						"title": "Path to JRE",
+						"markdownDescription": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.\n\n- [Check Configuration](command:AMPL.checkLanguageServerConfiguration)\n- [Autodetect Java](command:AMPL.autotedectJava)\n- [Select Java Folder](command:AMPL.selectJavaFolder)"
+					},
+					"AMPL.Runtime.changeDirectoryOnRun": {
+						"type": "boolean",
+						"default": true,
+						"description": "Change the working directory of AMPL to the directory of the file being run."
+					}
+				}
+			},
+			{
+				"title": "AMPL › Language server",
+				"properties": {
+					"AMPL.LanguageServer.enableLanguageServer": {
+						"type": "boolean",
+						"default": true,
+						"description": "Enable or disable the language server for AMPL files."
+					},
+					"AMPL.LanguageServer.trace.server": {
+						"type": "string",
+						"enum": [
+							"off",
+							"messages",
+							"verbose"
+						],
+						"default": "off",
+						"description": "Trace the communication between VS Code and the AMPL language server."
+					},
+					"AMPL.LanguageServer.diagnosticsEnabled": {
+						"type": "boolean",
+						"default": true,
+						"description": "Enable or disable error highlighting for AMPL files. Requires the language server."
+					}
+				}
+			},
+			{
+				"title": "AMPL › Advanced",
+				"properties": {
+					"AMPL.Advanced.enablePsuedoTerminal": {
+						"type": "boolean",
+						"default": false,
+						"description": "Enable or disable the advanced pseudoterminal. Has more features but can be unstable."
+					},
+					"AMPL.Advanced.enableAdvancedCommands": {
+						"type": "boolean",
+						"default": false,
+						"description": "Enable advanced and beta features like custom configuration and file selection commands."
+					}
+				}
+			}
+		]
 	},
 	"dependencies": {
 		"jsonc-parser": "^3.3.1",
@@ -299,17 +303,17 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
-		"@types/mocha": "^10.0.8",
-		"@types/node": "22.x",
+		"@types/mocha": "^10.0.10",
+		"@types/node": "^24.0.3",
 		"@types/vscode": "^1.90.0",
-		"@typescript-eslint/eslint-plugin": "^8.5.0",
-		"@typescript-eslint/parser": "^8.5.0",
-		"@vscode/test-electron": "^2.4.1",
-		"@vscode/vsce": "^3.1.0",
-		"eslint": "^9.10.0",
-		"mocha": "^10.7.3",
-		"path": "0.12.7",
-		"typescript": "^5.6.2",
+		"@typescript-eslint/eslint-plugin": "^8.34.1",
+		"@typescript-eslint/parser": "^8.34.1",
+		"@vscode/test-electron": "^2.5.2",
+		"@vscode/vsce": "^3.5.0",
+		"eslint": "^9.29.0",
+		"mocha": "^11.7.0",
+		"path": "^0.12.7",
+		"typescript": "^5.8.3",
 		"yarn": "1.22.22"
 	}
 }
