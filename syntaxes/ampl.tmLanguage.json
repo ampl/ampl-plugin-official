@@ -74,11 +74,11 @@
     },
   "keyword": {
         "name": "keyword.control.ampl",
-        "match": "\\b(and|arc|binary|card|check|circular|close|coef|coeff|commands|cover|cross|data|default|dimen|dimension|display|drop|else|end|first|fix|for|format|from|function|if|in|include|integer|last|let|maximize|member|minimize|max|min|model|net_in|net_out|next|nextw|node|not|obj|objective|option|or|ord|ord0|ordered|param|pipe|problem|prev|prevw|print|printf|product|prod|quit|repeat|reset|restore|reversed|set|shell|solution|solve|subject to|subj to|snapshot|solexpand|suffix|sum|symbolic|then|to|to_come|unfix|union|update|var|while|within|write)\\b|s\\.t\\."
+        "match": "(?<![\\w.])\\b(?:and|arc|binary|card|check|circular|close|coef|coeff|commands|cover|cross|data|default|dimen|dimension|display|drop|else|end|environ|first|fix|for|format|from|function|if|in|include|integer|last|let|maximize|member|minimize|max|min|model|net_in|net_out|next|nextw|node|not|obj|objective|option|or|ord|ord0|ordered|param|pipe|problem|prev|prevw|print|printf|product|prod|quit|repeat|reset|restore|reversed|set|shell|solution|solve|sovle|subject to|subj to|snapshot|solexpand|suffix|sum|symbolic|then|to|to_come|unfix|union|update|var|while|within|write)\\b"
       },
    "keywordlogical": {
         "name": "keyword.control.ampl",
-        "match": "\\b(count|atleast|atmost|exactly|forall|setof|exists|numberof|alldiff|complements)\\b|s\\.t\\."
+        "match": "(?<![\\w.])\\b(?:count|atleast|atmost|exactly|forall|setof|exists|numberof|alldiff|complements)\\b"
       },
   "suffix": {
     "name": "support.function.builtin.ampl",

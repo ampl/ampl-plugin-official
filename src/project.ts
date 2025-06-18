@@ -53,8 +53,9 @@ export async function saveFilesToConfig(filesToParse: string[]): Promise<void> {
             errorMessage = error.message;
         }
         vscode.window.showErrorMessage(`Failed to save configuration: ${errorMessage}`);
-        useConfigurationFiles(filesToParse)
+
     }
+    useConfigurationFiles(filesToParse)
 }
 
 export function loadFilesFromConfig(): string[] | null {

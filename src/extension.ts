@@ -80,14 +80,14 @@ function registerCommands(context: vscode.ExtensionContext) {
         }
     }));
     context.subscriptions.push(
-        vscode.commands.registerCommand('ampl.selectConfiguration', async () => {
+        vscode.commands.registerCommand('AMPL.selectConfiguration', async () => {
             await pr.selectConfiguration();
         })
     );
 
     // React to configuration changes
     vscode.workspace.onDidChangeConfiguration((e) => {
-        if (e.affectsConfiguration('vscode.filesToParse')) {
+        if (e.affectsConfiguration('AMPL.filesToParse')) {
             const updatedFilesToParse = vscode.workspace
                 .getConfiguration('AMPL')
                 .get<string[]>('filesToParse');
