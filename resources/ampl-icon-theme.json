@@ -1,27 +1,20 @@
 {
-    "iconDefinitions": {
-      "_ampl_model": {
-        "iconPath": "./icon_mod.png"
-      },
-      "_ampl_data": {
-        "iconPath": "./icon_dat.png"
-      },
-      "_ampl_run": {
-        "iconPath": "./icon_run.png"
-      },
-      "_ampl_icon" : {
-        "iconPath": "./logo.png"
-      }
-    },
-    "fileExtensions" : {
-        "mod" : "_ampl_model",
-        "dat" : "_ampl_data",
-        "run" : "_ampl_run",
-        "ampl" : "_ampl_model",
-    },
-    "languageIds" : {
-        "mod" : "ampl",
-        "dat" : "ampl-dat",
-        "run" : "ampl",
-        "ampl" : "ampl"    }
+  "iconDefinitions": {
+    "_ampl_model": { "iconPath": "./icon_mod.png" },
+    "_ampl_data": { "iconPath": "./icon_dat.png" },
+    "_ampl_run": { "iconPath": "./icon_run.png" },
+    "_ampl_icon": { "iconPath": "./logo.png" }
+  },
+  "fileExtensions": {
+    "mod": "_ampl_model",
+    "dat": "_ampl_data",
+    "run": "_ampl_run",
+    "ampl": "_ampl_model"
+  },
+  "languageIds": {
+    "mod": "ampl",
+    "dat": "ampl-dat",
+    "run": "ampl",
+    "ampl": "ampl"
   }
+}
