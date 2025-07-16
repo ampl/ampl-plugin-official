@@ -66,7 +66,7 @@
       },
   "suffix": {
     "name": "support.function.builtin.ampl",
-    "match": "\\.(?:[as]?status|defeqn|defvar|exitcode|message|result|lb[012s]?|ub[012s]?|[ul]?rc|val|init0?|body|dinit0?|[ul]?dual|[ul]?slack|suffix|slack|dual|rc|basis|message|exitcode)"
+    "match": "\\.(?:[as]?status|defeqn|defvar|exitcode|message|result|lb[012s]?|ub[012s]?|[ul]?rc|val|init0?|body|dinit0?|[ul]?dual|[ul]?slack|suffix|slack|dual|rc|basis|message|exitcode|Initial|Reals|Integers|ASCII|EBCDIC|Display)"
   },
 
  "math": {

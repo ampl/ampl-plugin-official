@@ -93,7 +93,10 @@ function registerCommands(context: vscode.ExtensionContext) {
                 .get<string[]>('filesToParse');
             // Send the updated list to the language server
             client.sendNotification('workspace/didChangeConfiguration', {
+                settings: { ampl :{
                 filesToParse: updatedFilesToParse
+                }
+            }
             });
         }
         if (e.affectsConfiguration("AMPL.Runtime.pathToJRE")) {
@@ -104,9 +107,11 @@ function registerCommands(context: vscode.ExtensionContext) {
             vscode.commands.executeCommand("setContext", "AMPL.enableBetaCommands", advanced);
         } 
         if( e.affectsConfiguration("AMPL.LanguageServer.diagnosticsEnabled")) {
-            const diagnosticsEnabled = options.getDiagnosticsEnabled();
+            const diagnosticsEnabledValue = options.getDiagnosticsEnabled();
             client.sendNotification('workspace/didChangeConfiguration', {
-                diagnosticsEnabled: diagnosticsEnabled
+                settings: {ampl :{
+                diagnosticsEnabled: diagnosticsEnabledValue
+                }}
             });
         }
     });
