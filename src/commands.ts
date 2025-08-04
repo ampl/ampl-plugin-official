@@ -109,10 +109,6 @@ function adjustSelectionForBracketsAndWords(text: string, editor: vscode.TextEdi
     return text;
 }
 
-function runFile(): void {
-    runFileWithTerminal();
-}
-
 function sendCommandToTerminal(command : string): void {
     if (options.getUsePseudoTerminal()) {
         const terminal = getAmplPty();
@@ -125,27 +121,32 @@ function sendCommandToTerminal(command : string): void {
     }
 
 }
+function runFile(): void {
+    runFileWithTerminal();
+}
 
-function runFileWithTerminal(): void {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor) return;
+export function runFileWithTerminal(filePath?: string): void {
+    let targetFile: string | undefined = filePath;
+    if (!targetFile) {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) return;
+        targetFile = editor.document.fileName;
+        editor.document.save();
+    }
 
-    const document = editor.document;
-    document.save();
     const changeDir = options.getChangeDirOnRun();
     let filePathToSend: string;
     if (changeDir) {
-        const folder = path.dirname(document.fileName);
+        const folder = path.dirname(targetFile);
         sendCommandToTerminal(`cd "${folder}";`);
-        filePathToSend = path.basename(document.fileName);
+        filePathToSend = path.basename(targetFile);
     } else {
-
         const openedFolder = getOpenedFolder();
         if (openedFolder) sendCommandToTerminal(`cd "${openedFolder}";`);
-        filePathToSend = document.fileName;
+        filePathToSend = targetFile;
     }
 
-    switch (path.extname(document.fileName)) {
+    switch (path.extname(targetFile)) {
         case ".dat":
             sendCommandToTerminal(`data "${filePathToSend}";`);
             break;

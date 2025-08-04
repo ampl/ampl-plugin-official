@@ -14,7 +14,10 @@ function getFilePath(): string {
         vscode.window.showErrorMessage('No workspace folder found.');
         return "";
     }
-
+    const vscodeDir = path.join(workspaceFolder.uri.fsPath, '.vscode');
+        if (!fs.existsSync(vscodeDir)) {
+            fs.mkdirSync(vscodeDir, { recursive: true });
+        }
     return path.join(workspaceFolder.uri.fsPath, '.vscode', FILENAME);
 }
 

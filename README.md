@@ -37,17 +37,23 @@ Most used AMPL commands have keyboard shortcuts and can be accessed by the comma
 
 ## Language Server Features
 
-### 1. Declarations support
-- Hover over an entity declared in the current file to see its declaration
+### 1. Multi-file support
+
+AMPL projects often consist of several files, such as a main model file, some data files, and a script listing the files to include. This extension supports multi-file workflows: you can select a root file (the main entry point for parsing and running), and the extension will ensure that all relevant files are parsed and available to the language server. This enables features like go-to-definition, diagnostics and workspace symbols to work seamlessly across your entire project, not just the currently open file.
+Use the command `AMPL: select files to parse` to choose the root file to parse; in case of multiple configurations, they can be switched to/from by `AMPL: select launch configuration`.
+Use `CTRL/Cmd + P` to see and search the list of symbols in the current workspace.
+
+### 2. Declarations support
+- Hover over an entity declared in the current file (or workspace) to see its declaration
 - Right click or press F12 for "go to definition"
 - Tokenized syntax highlighting to support distinction for functions and variables.
 
-### 2. Outline view
+### 3. Outline view
 Get a list of symbols in the current file in the outline view
 
 ![Outline](resources/outline.png)
 
-### 3. Diagnostics
+### 4. Diagnostics
 Errors are higlighted and listed in the "Problems" window in VS code. Note that the language server is currently under development, therefore some language features might be missing; in case valid constructs are flagged as errors, please disable diagnostic.
 
 ![Diagnostics](resources/diagnostics.png)

@@ -1,15 +1,88 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 import * as path from 'path';
-import * as ap from "./amplterminal"
-import * as utils from './utils'
-import * as pt from "./pseudoterminal"
-import * as pr from "./project"
-import { registerRunCommands } from './commands';
+import * as ap from "./amplterminal";
+import * as utils from './utils';
+import * as pt from "./pseudoterminal";
+import * as pr from "./project";
+import { registerRunCommands, runFileWithTerminal } from './commands';
 import * as options from './options';
 import { registerLMCommands } from './lmconvert';
 import { integer, LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node';
+
+// Minimal Debug Adapter to map Run/Run Without Debugging to AMPL.runFile (root file)
+class AmplDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
+    createDebugAdapterDescriptor(session: vscode.DebugSession): vscode.ProviderResult<vscode.DebugAdapterDescriptor> {
+        // Try to get the root file from AMPL.files.json
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        let rootFile: string | undefined;
+        if (workspaceFolder) {
+            const configPath = path.join(workspaceFolder.uri.fsPath, '.vscode', 'AMPL.files.json');
+            if (fs.existsSync(configPath)) {
+                try {
+                    const configContent = fs.readFileSync(configPath, 'utf-8');
+                    const config = JSON.parse(configContent);
+                    // Use the first file as root, or adjust as needed
+                    if (Array.isArray(config.filesToParse) && config.filesToParse.length > 0) {
+                        rootFile = config.filesToParse[0];
+                    } else if (Array.isArray(config.configurations) && config.configurations.length > 0 && Array.isArray(config.configurations[0].filesToParse) && config.configurations[0].filesToParse.length > 0) {
+                        rootFile = config.configurations[0].filesToParse[0];
+                    }
+                } catch (e) {
+                    vscode.window.showErrorMessage('Could not read AMPL root file from config.');
+                }
+            }
+        }
+        if (rootFile) {
+            runFileWithTerminal(vscode.Uri.file(rootFile).toString()); 
+        } else {
+            runFileWithTerminal();
+        }
+        // Return a dummy inline debug adapter to satisfy VS Code
+        // Return a DebugAdapterInlineImplementation with a no-op handleMessage method
+        const emitter = new vscode.EventEmitter<any>();
+        const noopAdapter = {
+            handleMessage: (_message: any) => {
+                // No operation; session ends immediately
+            },
+            onDidSendMessage: emitter.event,
+            dispose: () => { emitter.dispose(); }
+        };
+        return new vscode.DebugAdapterInlineImplementation(noopAdapter);
+    }
+}
+
+// Command to create a default launch.json for AMPL
+async function createAmplLaunchJson() {
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+    if (!workspaceFolder) {
+        vscode.window.showErrorMessage('No workspace folder found.');
+        return;
+    }
+    const vscodeDir = path.join(workspaceFolder.uri.fsPath, '.vscode');
+    const launchPath = path.join(vscodeDir, 'launch.json');
+    if (!fs.existsSync(vscodeDir)) {
+        fs.mkdirSync(vscodeDir);
+    }
+    if (fs.existsSync(launchPath)) {
+        const overwrite = await vscode.window.showWarningMessage('A launch.json already exists. Overwrite?', 'Yes', 'No');
+        if (overwrite !== 'Yes') return;
+    }
+    const launchConfig = {
+        version: '0.2.0',
+        configurations: [
+            {
+                name: 'Run AMPL Root File or current file',
+                type: 'ampl',
+                request: 'launch',
+                noDebug: true
+            }
+        ]
+    };
+    fs.writeFileSync(launchPath, JSON.stringify(launchConfig, null, 4), 'utf-8');
+    vscode.window.showInformationMessage('AMPL launch.json created at .vscode/launch.json');
+}
 
 export let client: LanguageClient;
 
@@ -19,6 +92,11 @@ export function activate(context: vscode.ExtensionContext) {
         console.error("Failed to initialize the extension:", error);
         vscode.window.showErrorMessage("Failed to initialize the AMPL extension. Check the console for details.");
     });
+
+    // Register Debug Adapter Descriptor Factory for 'ampl' debug type
+    context.subscriptions.push(
+        vscode.debug.registerDebugAdapterDescriptorFactory('ampl', new AmplDebugAdapterDescriptorFactory())
+    );
 }
 
 async function initializeExtension(context: vscode.ExtensionContext) {
@@ -61,16 +139,13 @@ async function initializeExtension(context: vscode.ExtensionContext) {
 
 // Register commands for the extension
 function registerCommands(context: vscode.ExtensionContext) {
-
- 
-
     // Java and language server commands
-    context.subscriptions.push(vscode.commands.registerCommand('AMPL.autotedectJava',
-        utils.autoDetectJavaPath));
-    context.subscriptions.push(vscode.commands.registerCommand('AMPL.selectJavaFolder',
-        utils.selectJavaFolder));
-    context.subscriptions.push(vscode.commands.registerCommand('AMPL.checkLanguageServerConfiguration',
-        utils.cmdCheckLanguageServerConfiguration));
+    context.subscriptions.push(vscode.commands.registerCommand('AMPL.autotedectJava', utils.autoDetectJavaPath));
+    context.subscriptions.push(vscode.commands.registerCommand('AMPL.selectJavaFolder', utils.selectJavaFolder));
+    context.subscriptions.push(vscode.commands.registerCommand('AMPL.checkLanguageServerConfiguration', utils.cmdCheckLanguageServerConfiguration));
+
+    // Command to create launch.json
+    context.subscriptions.push(vscode.commands.registerCommand('AMPL.createLaunchJson', createAmplLaunchJson));
 
     // Advanced commands (disabled by default)
     context.subscriptions.push(vscode.commands.registerCommand('AMPL.selectFilesToParse', async () => {
@@ -88,15 +163,10 @@ function registerCommands(context: vscode.ExtensionContext) {
     // React to configuration changes
     vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('AMPL.filesToParse')) {
-            const updatedFilesToParse = vscode.workspace
-                .getConfiguration('AMPL')
-                .get<string[]>('filesToParse');
+            const updatedFilesToParse = vscode.workspace.getConfiguration('AMPL').get<string[]>('filesToParse');
             // Send the updated list to the language server
             client.sendNotification('workspace/didChangeConfiguration', {
-                settings: { ampl :{
-                filesToParse: updatedFilesToParse
-                }
-            }
+                settings: { ampl: { filesToParse: updatedFilesToParse } }
             });
         }
         if (e.affectsConfiguration("AMPL.Runtime.pathToJRE")) {
@@ -105,22 +175,18 @@ function registerCommands(context: vscode.ExtensionContext) {
         if (e.affectsConfiguration("AMPL.Advanced.enableAdvancedCommands")) {
             const advanced = options.getEnableAdvancedCommands();
             vscode.commands.executeCommand("setContext", "AMPL.enableBetaCommands", advanced);
-        } 
-        if( e.affectsConfiguration("AMPL.LanguageServer.diagnosticsEnabled")) {
+        }
+        if (e.affectsConfiguration("AMPL.LanguageServer.diagnosticsEnabled")) {
             const diagnosticsEnabledValue = options.getDiagnosticsEnabled();
             client.sendNotification('workspace/didChangeConfiguration', {
-                settings: {ampl :{
-                diagnosticsEnabled: diagnosticsEnabledValue
-                }}
+                settings: { ampl: { diagnosticsEnabled: diagnosticsEnabledValue } }
             });
         }
     });
 
-    context.subscriptions.push(vscode.commands.registerCommand(
-        "AMPL.openConsole", getAmplConsole));
+    context.subscriptions.push(vscode.commands.registerCommand("AMPL.openConsole", getAmplConsole));
     registerTerminalProfile(context);
     registerLMCommands(context);
-
 }
 
 async function activateLanguageServer(context: vscode.ExtensionContext) {

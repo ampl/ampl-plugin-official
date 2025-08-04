@@ -3,7 +3,7 @@
 	"displayName": "AMPL (Official)",
 	"publisher": "AMPLOptimizationInc",
 	"description": "AMPL Language Support with Language Server",
-	"version": "0.1.2",
+	"version": "0.2.1",
 	"engines": {
 		"vscode": "^1.90.0"
 	},
@@ -43,43 +43,31 @@
 			}
 		],
 		"debuggers": [
-			{
-				"type": "amplProject",
-				"label": "AMPL Project",
-				"languages": [
-					"ampl"
-				],
-				"configurationAttributes": {
-					"launch": {
+				{
+					"type": "ampl",
+					"label": "AMPL",
+					"program": "./out/extension.js",
+					"languages": ["ampl"],
+					"configurationAttributes": {
+						"launch": {
 						"properties": {
-							"fileList": {
-								"type": "array",
-								"description": "List of files to be parsed by the AMPL binary.",
-								"items": {
-									"type": "string",
-									"description": "The path to a file"
-								},
-								"default": []
+							"program": {
+							"type": "string",
+							"description": "The AMPL file to run",
+							"default": "${file}"
 							}
 						}
-					}
-				},
-				"configurationSnippets": [
-					{
-						"label": "AMPL: define project",
-						"description": "Run and parse a set of AMPL files with the AMPL binary",
-						"body": {
-							"name": "Project name",
-							"type": "amplProject",
-							"request": "launch",
-							"fileList": [
-								"${workspaceFolder}/examples/file1.ampl",
-								"${workspaceFolder}/examples/file2.ampl"
-							]
 						}
+					},
+					"initialConfigurations": [
+						{
+						"type": "ampl",
+						"request": "launch",
+						"name": "Run AMPL file",
+						"program": "${file}"
+						}
+					]
 					}
-				]
-			}
 		],
 		"iconThemes": [
 			{
@@ -223,6 +211,11 @@
 				"title": "AMPL: Reset",
 				"icon": "$(trash)",
 				"shortTitle": "Reset"
+			},
+			{
+				"command": "AMPL.createLaunchJson",
+				"title": "AMPL: Create launch.json for AMPL (F5 Support)",
+				"category": "AMPL"
 			}
 		],
 		"configuration": [
