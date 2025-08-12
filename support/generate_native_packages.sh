@@ -44,7 +44,7 @@ mkdir -p "$DIST_DIR"
 
 # Copying jar
 mkdir -p libs
-cp jres/ampl-ls.jar ./libs
+cp jres/ampl-ls.jar ./
 
 # sanity check
 [[ -s libs/ampl-ls.jar ]] || { echo "Error: libs/ampl-ls.jar not created or empty"; exit 1; }
@@ -53,6 +53,9 @@ cp jres/ampl-ls.jar ./libs
 
 # Clean install: prod-only deps so 'npm list --production' is happy
 rm -rf node_modules
+if [ ! -f package-lock.json ]; then
+  npm install --package-lock-only
+fi
 npm ci --omit=dev
 npm prune --omit=dev
 
