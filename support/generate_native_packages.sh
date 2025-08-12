@@ -42,10 +42,7 @@ EXT_NAME="$(node -p "require('./package.json').name")"
 EXT_VER="$(node -p "require('./package.json').version")"
 mkdir -p "$DIST_DIR"
 
-# --- 1) Extract ampl-ls.jar into libs/ampl-ls.jar --------------------------
-
-echo ">> Extracting libs/ampl-ls.jar from '$AMPL_ZIP'..."
-
+# Copying jar
 mkdir -p libs
 cp jres/ampl-ls.jar ./libs
 
