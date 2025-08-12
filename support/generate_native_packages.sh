@@ -3,9 +3,6 @@ set -euox pipefail
 
 # --- Config ---------------------------------------------------------------
 
-# Path to the ZIP that contains ampl-ls.jar/ampl-ls.jar (relative to repo root).
-AMPL_ZIP="${AMPL_ZIP:-./jres/ampl-ls.jar.zip}"
-
 # Platforms to build. Override with: PLATFORMS="linux-x64 macos-arm64" ./scripts/build_native_vsix.sh
 PLATFORMS="${PLATFORMS:-win-x64 linux-x64 macos-intel64 macos-arm64}"
 
@@ -50,15 +47,22 @@ mkdir -p "$DIST_DIR"
 echo ">> Extracting libs/ampl-ls.jar from '$AMPL_ZIP'..."
 
 mkdir -p libs
-unzip -p "$AMPL_ZIP" "ampl-ls.jar/ampl-ls.jar" > libs/ampl-ls.jar
+cp jres/ampl-ls.jar ./libs
+
 # sanity check
 [[ -s libs/ampl-ls.jar ]] || { echo "Error: libs/ampl-ls.jar not created or empty"; exit 1; }
 
 # --- 2 & 3) For each platform: unpack JRE -> libs/jre, then package vsix ----
 
+# Clean install: prod-only deps so 'npm list --production' is happy
+rm -rf node_modules
+npm ci --omit=dev
+npm prune --omit=dev
+
+
 for platform in $PLATFORMS; do
   target="${VSCE_TARGET_FOR[$platform]:-}"
-  jre_zip="jres/${JRE_PLATFORMS_FOR[$platform]:-}.zip"
+  jre_zip="jres/${JRE_PLATFORMS_FOR[$platform]:-}.tar.gz"
 
   if [[ -z "$target" || -z "$jre_zip" ]]; then
     echo "!! Skipping unknown platform '$platform' (no mapping defined)"
@@ -74,7 +78,7 @@ for platform in $PLATFORMS; do
   rm -rf libs/jre
   #mkdir -p libs/jre
   rm -rf libs/${JRE_PLATFORMS_FOR[$platform]:-}
-  unzip -q "$jre_zip" -d libs
+  tar -zxf "$jre_zip" -C libs
 
   mv libs/${JRE_PLATFORMS_FOR[$platform]:-}/ libs/jre
   if [[ "$platform" == linux-* || "$platform" == macos-* ]]; then
