@@ -192,7 +192,7 @@ function registerCommands(context: vscode.ExtensionContext) {
 async function activateLanguageServer(context: vscode.ExtensionContext) {
     const outputChannel = vscode.window.createOutputChannel("AMPL Language Server");
     outputChannel.appendLine("Starting language server...");
-    const classPath = path.join(__dirname, '..', 'libs', 'lib-all.jar');
+    const classPath = path.join(__dirname, '..', 'libs', 'ampl-ls.jar');
     const args: string[] = ['-cp', classPath, 'amplls.StdioLauncher'];
 
     const javaBin = utils.getJavaPath();

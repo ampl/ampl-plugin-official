@@ -103,6 +103,18 @@ export async function findAmplBinary(): Promise<string | undefined> {
 export async function findJava(amplPath: string | undefined): Promise<string | undefined> {
     const javaExecutable = os.platform() === 'win32' ? 'java.exe' : 'java';
 
+
+    // Check in the runtime subdirectory for embedded JRE
+    const embeddedJre = path.join(__dirname, '..', 'libs', 'jre', 'bin', javaExecutable);
+    if (await vscode.workspace.fs.stat(vscode.Uri.file(embeddedJre))) {
+         try {
+        return embeddedJre;
+         }
+         catch {
+            // Does not exist
+         }
+    }
+
     // Check in the JRE subdirectory of the AMPL directory
     if (amplPath) {
         const javaInAmplJRE = path.join(amplPath, 'JRE', javaExecutable);

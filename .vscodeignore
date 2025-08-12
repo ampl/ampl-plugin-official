@@ -8,3 +8,5 @@ out/test/**
 *.ts
 src/**/*.ts
 models/
+jres/** 
+support/**

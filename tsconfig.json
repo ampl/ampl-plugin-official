@@ -4,7 +4,8 @@
         "out",
         "./node_modules",
         "node_modules/*",
-		"support/*"
+		"support/*",
+		"/jres/*"
     ],
 	"compilerOptions": {
 		"module": "commonjs",
