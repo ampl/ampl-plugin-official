@@ -16,7 +16,9 @@
     "onLanguage:ampl",
     "workspaceContains:*.mod",  
 	"workspaceContains:*.dat",
-	"workspaceContains:*.run"
+	"workspaceContains:*.run",
+	"workspaceContains: AMPL.files.json",
+	"workspaceContains: .vscode/AMPL.files.json"
 ],
 
 	"categories": [

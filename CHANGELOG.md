@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Native runtime is now included for Windows x64, Linux x64, MacOS x64 and ARM, dropped requirement for JRE
+- If a list of files is already present for the current directory (see `AMPL: Select files to parse`), it 
+  is loaded automatically at startup
 
 
 ## [0.2.1] - 20250728

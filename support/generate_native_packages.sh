@@ -29,7 +29,7 @@ DIST_DIR="${DIST_DIR:-dist}"
 
 need() { command -v "$1" >/dev/null 2>&1 || { echo "Error: missing '$1' on PATH" >&2; exit 1; }; }
 
-need unzip
+need tar
 need node
 # Use npx vsce (no global install required)
 npx --yes vsce --version >/dev/null
@@ -63,6 +63,14 @@ npm prune --omit=dev
 [[ -f out/extension.js ]] || {
   echo "Error: out/extension.js not found after build. Check your build step and package.json:main"; exit 1;
 }
+
+
+# --- Fallback generic VSIX (NO JRE, NO VERSION IN FILENAME) ----------------
+rm -rf libs/jre  # ensure no JRE included
+FALLBACK_VSIX="$DIST_DIR/${EXT_NAME}-${EXT_VER}.vsix"
+echo ">> Packaging fallback VSIX (no JRE, no version) -> $FALLBACK_VSIX"
+npx --yes vsce package --out "$FALLBACK_VSIX"
+[[ -s "$FALLBACK_VSIX" ]] || { echo "Error: fallback VSIX not produced"; exit 1; }
 
 
 

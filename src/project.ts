@@ -11,7 +11,7 @@ function getFilePath(): string {
 
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
     if (!workspaceFolder) {
-        vscode.window.showErrorMessage('No workspace folder found.');
+        vscode.window.showErrorMessage('No workspace folder found, please open a folder (File/Open Folder) to use this functionality.');
         return "";
     }
     const vscodeDir = path.join(workspaceFolder.uri.fsPath, '.vscode');
@@ -38,6 +38,8 @@ export async function selectFilesToParse(): Promise<string[] | undefined> {
 export async function saveFilesToConfig(filesToParse: string[]): Promise<void> {
     const configFilePath = getFilePath()
 
+    if(configFilePath == "")
+        return;
     // Prepare the configuration content
     const configContent = {
         configurations: [
@@ -61,25 +63,6 @@ export async function saveFilesToConfig(filesToParse: string[]): Promise<void> {
     useConfigurationFiles(filesToParse)
 }
 
-export function loadFilesFromConfig(): string[] | null {
-    const configFilePath = getFilePath()
-    if (fs.existsSync(configFilePath)) {
-        try {
-            const configContent = fs.readFileSync(configFilePath, 'utf-8');
-            const config = JSON.parse(configContent);
-            return config.filesToParse || [];
-        } catch (error) {
-            let errorMessage = 'Unknown error';
-            if (error instanceof Error) {
-                errorMessage = error.message;
-            }
-            vscode.window.showErrorMessage(`Failed to load configuration: ${errorMessage}`);
-        }
-    } else {
-        vscode.window.showInformationMessage('No configuration file found, please select files to parse.');
-    }
-    return null;
-}
 
 export async function selectConfiguration(): Promise<void> {
     const configFilePath = getFilePath()
@@ -119,6 +102,45 @@ export async function selectConfiguration(): Promise<void> {
             // Pass the selected filesToParse to your language server or other logic
             useConfigurationFiles(chosenConfig.filesToParse);
         }
+    }
+}
+
+
+export async function openIfDefaultConfiguration({startup = false}: {startup?: boolean} = {}): Promise<void> {
+    const configFilePath = getFilePath();
+
+    // On startup, avoid noisy popups; just bail quietly if missing/invalid.
+    const notifyError = (msg: string) =>
+        startup ? console.warn(msg) : vscode.window.showErrorMessage(msg);
+
+    if (!fs.existsSync(configFilePath)) {
+        return;
+    }
+
+    let configurations: any[] = [];
+    try {
+        const configFileContent = fs.readFileSync(configFilePath, 'utf-8');
+        const configFile = JSON.parse(configFileContent);
+
+        const raw = configFile?.configurations;
+        configurations = Array.isArray(raw) ? raw : [];
+    } catch {
+         notifyError('Failed to read the configuration file.');
+         return;
+    }
+
+    if (configurations.length === 0) {
+         notifyError('No configurations found in the file.');
+         return;''
+    }
+
+    if (configurations.length === 1) {
+        const only = configurations[0];
+        if (!only?.filesToParse || !Array.isArray(only.filesToParse) || only.filesToParse.length === 0) {
+            return;
+        }
+        useConfigurationFiles(only.filesToParse);
+        return;
     }
 }
 

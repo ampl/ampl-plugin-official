@@ -221,6 +221,16 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
 
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'ampl' }],
+        middleware: {
+            provideDocumentFormattingEdits: () => {
+                // Disable document formatting
+                return undefined;
+            },
+            provideDocumentRangeFormattingEdits: () => {
+                // Disable range formatting
+                return undefined;
+            }
+        },
         initializationOptions: {
             diagnosticsEnabled: options.getDiagnosticsEnabled()
         },
@@ -241,7 +251,11 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
             `Failed to start the language server. Java interpreter: ${javaBin}. Error: ${errorMessage}`
         );
         outputChannel.appendLine(`Failed to start the language server. Error: ${errorMessage}`);
+        return;
     }
+    pr.openIfDefaultConfiguration({ startup: true }).catch(err => console.error(err));
+    
+
 }
 
 
