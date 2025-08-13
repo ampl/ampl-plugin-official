@@ -49,25 +49,22 @@ cp jres/ampl-ls.jar libs/
 # sanity check
 [[ -s libs/ampl-ls.jar ]] || { echo "Error: libs/ampl-ls.jar not created or empty"; exit 1; }
 
+# --- 2 & 3) For each platform: unpack JRE -> libs/jre, then package vsix ----
 
-# Clean install (include dev deps so we can compile)
+# Clean install: prod-only deps so 'npm list --production' is happy
 rm -rf node_modules
 if [ ! -f package-lock.json ]; then
   npm install --package-lock-only
 fi
-npm ci
-
-# Build your extension (pick the one you actually use)
-npm run compile
-
-# Make sure the entrypoint exists (adjust path if your "main" differs)
-[[ -f extension/out/extension.js ]] || {
-  echo "Error: extension/out/extension.js not found after build. Check your build step and package.json:main"; exit 1;
-}
-# Now drop dev deps from the package contents
+npm ci --omit=dev
 npm prune --omit=dev
 
-# --- 2 & 3) For each platform: unpack JRE -> libs/jre, then package vsix ----
+[[ -f out/extension.js ]] || {
+  echo "Error: out/extension.js not found after build. Check your build step and package.json:main"; exit 1;
+}
+
+
+
 for platform in $PLATFORMS; do
   target="${VSCE_TARGET_FOR[$platform]:-}"
   jre_zip="jres/${JRE_PLATFORMS_FOR[$platform]:-}.tar.gz"
