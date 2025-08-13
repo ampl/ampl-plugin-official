@@ -58,6 +58,7 @@ if [ ! -f package-lock.json ]; then
 fi
 npm ci --omit=dev
 npm prune --omit=dev
+npm run compile
 
 [[ -f out/extension.js ]] || {
   echo "Error: out/extension.js not found after build. Check your build step and package.json:main"; exit 1;
