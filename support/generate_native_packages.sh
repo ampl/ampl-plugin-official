@@ -56,9 +56,9 @@ rm -rf node_modules
 if [ ! -f package-lock.json ]; then
   npm install --package-lock-only
 fi
-npm ci --omit=dev
-npm prune --omit=dev
+npm ci
 npm run compile
+npm prune --omit=dev
 
 [[ -f out/extension.js ]] || {
   echo "Error: out/extension.js not found after build. Check your build step and package.json:main"; exit 1;
