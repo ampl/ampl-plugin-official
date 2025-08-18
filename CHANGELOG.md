@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-## [0.2.2] - 20250812
+## [0.2.3] - 20250818
+
+### Added
+- Provisional AMPL file formatter (accessible via Command Palette/Format Document)
+
+
+## [0.2.2] - 20250813
 
 ### Changed
 - Native runtime is now included for Windows x64, Linux x64, MacOS x64 and ARM, dropped requirement for JRE
