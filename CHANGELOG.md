@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-## [0.2.3] - 20250818
+## [0.2.4] - 20250818
 
 ### Added
 - Provisional AMPL file formatter (accessible via Command Palette/Format Document)
