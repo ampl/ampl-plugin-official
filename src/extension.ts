@@ -88,6 +88,7 @@ export let client: LanguageClient;
 
 // Entry point
 export function activate(context: vscode.ExtensionContext) {
+    checkForUpdates(context);
     initializeExtension(context).catch((error) => {
         console.error("Failed to initialize the extension:", error);
         vscode.window.showErrorMessage("Failed to initialize the AMPL extension. Check the console for details.");
@@ -99,9 +100,33 @@ export function activate(context: vscode.ExtensionContext) {
     );
 }
 
-async function initializeExtension(context: vscode.ExtensionContext) {
+async function checkForUpdates(context: vscode.ExtensionContext) {
+  const currentVersion = vscode.extensions.getExtension("AMPLOptimizationInc.ampl-plugin-official")?.packageJSON.version;
+  const previousVersion = context.globalState.get<string>("ampl-plugin-official-version");
 
-        
+  if (currentVersion !== previousVersion) {
+    // Extension has just been updated (or first install)
+    // Force autodetection of JRE
+    await onExtensionUpdated(previousVersion, currentVersion);
+    await context.globalState.update("ampl-plugin-official-version", currentVersion);
+  }
+}
+
+async function onExtensionUpdated(
+  oldVersion: string | undefined,
+  newVersion: string | undefined
+) {
+  if (oldVersion) {
+    console.log(`Extension updated: ${oldVersion} → ${newVersion}`);
+  } else {
+    console.log(`Extension installed: ${newVersion}`);
+  }
+  options.setPathToJRE(null);
+  utils.initializeJavaPath(true);
+}
+
+
+async function initializeExtension(context: vscode.ExtensionContext) {
         // Initialize AMPL and Java paths
         await utils.initializeAmplPath();
         if (options.getUseLanguageServer()) await utils.initializeJavaPath();
