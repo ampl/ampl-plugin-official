@@ -147,9 +147,7 @@ async function initializeExtension(context: vscode.ExtensionContext) {
 
         // Register commands and other features
         registerCommands(context);
-        if (options.getUseLanguageServer()) {
-            await activateLanguageServer(context);
-        }
+       
 
         registerRunCommands(context);
         // Handle advanced commands configuration
@@ -157,6 +155,15 @@ async function initializeExtension(context: vscode.ExtensionContext) {
         vscode.commands.executeCommand("setContext", "AMPL.enableBetaCommands", advanced);
 
         utils.checkForConflictingExtensions(); 
+        try {
+            if (options.getUseLanguageServer()) {
+                await activateLanguageServer(context);
+            } 
+        }
+         catch (error) {
+            console.error("Error activating language server:", error);
+        }
+
 
 }
 

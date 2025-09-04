@@ -106,14 +106,13 @@ export async function findJava(amplPath: string | undefined): Promise<string | u
 
     // Check in the runtime subdirectory for embedded JRE
     const embeddedJre = path.join(__dirname, '..', 'libs', 'jre', 'bin', javaExecutable);
-    if (await vscode.workspace.fs.stat(vscode.Uri.file(embeddedJre))) {
-         try {
-        return embeddedJre;
-         }
+    try {
+        if (await vscode.workspace.fs.stat(vscode.Uri.file(embeddedJre))) { return embeddedJre; }
+        }
          catch {
             // Does not exist
          }
-    }
+    
 
     // Check in the JRE subdirectory of the AMPL directory
     if (amplPath) {
@@ -384,7 +383,7 @@ export async function autoDetectJavaPath() {
     options.setPathToJRE();
      await initializeJavaPath(true); // Implement logic to autodetect Java
             const javaBin = getJavaPath();
-            if (javaBin) {1
+            if (javaBin) {
                 options.setPathToJRE(javaBin);
                 vscode.window.showInformationMessage(`Java Runtime detected and set to: ${javaBin}`);
                 // Force refresh of the settings UI
