@@ -6,11 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
-## [0.2.6] - 20250911
+## [0.2.7] - 20250911
 
 ### Fixed
 - Parser updates
-- Formatting (in alpha version) is now disable by default
+- Formatting (in alpha version) is now disabled by default
 
 
 ## [0.2.5] - 20250819
