@@ -253,7 +253,7 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
 
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'ampl' }],
-      /*  middleware: {
+        middleware: {
             provideDocumentFormattingEdits: () => {
                 // Disable document formatting
                 return undefined;
@@ -262,7 +262,7 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
                 // Disable range formatting
                 return undefined;
             }
-        },*/
+        },
         initializationOptions: {
             diagnosticsEnabled: options.getDiagnosticsEnabled()
         },
