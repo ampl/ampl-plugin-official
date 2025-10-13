@@ -3,7 +3,7 @@
 	"displayName": "AMPL (Official)",
 	"publisher": "AMPLOptimizationInc",
 	"description": "AMPL Language Support with Language Server",
-	"version": "0.2.8",
+	"version": "0.2.9",
 	"engines": {
 		"vscode": "^1.90.0"
 	},
