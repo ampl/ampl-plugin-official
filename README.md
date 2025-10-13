@@ -84,7 +84,7 @@ Errors are higlighted and listed in the "Problems" window in VS code. Note that 
 
 | Setting                                       | Description                                                                                       |
 |-----------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `AMPL.Runtime.pathToAMPLbinary`                       | Path to the AMPL binary. If empty, the extension will look for it in system paths.                |
+| `AMPL.Runtime.pathToAMPLBinary`                       | Path to the AMPL binary. If empty, the extension will look for it in system paths.                |
 | `AMPL.Runtime.pathToJRE`                              | Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths. |
 | `AMPL.Runtime.changeDirectoryOnRun`                   | Change the working directory of AMPL to the directory of the file being run.                      |
 | `AMPL.LanguageServer.enableLanguageServer`    | Enable or disable the language server for AMPL files.                                             |

@@ -11,7 +11,7 @@ let javaPath: string | undefined = undefined;
  * Initializes the AMPL path and stores it in a global variable.
  */
 export async function initializeAmplPath(): Promise<void> {
-    amplPath = options.getPathToAMPLbinary() || await findAmplBinary();
+    amplPath = options.getpathToAMPLBinary() || await findAmplBinary();
 }
 
 /**
@@ -82,7 +82,7 @@ export async function findAmplBinary(): Promise<string | undefined> {
                     const selectedPath = selectedFiles[0].fsPath;
 
                     // Save the selected path to the settings
-                    options.setPathToAMPLbinary(selectedPath);
+                    options.setpathToAMPLBinary(selectedPath);
 
                     vscode.window.showInformationMessage(`Selected AMPL binary saved: ${selectedPath}`);
                     return selectedPath;

@@ -232,18 +232,20 @@
 			{
 				"title": "AMPL › Runtime",
 				"properties": {
-					"AMPL.Runtime.pathToAMPLbinary": {
+					"AMPL.Runtime.pathToAMPLBinary": {
 						"type": "string",
 						"default": "",
 						"description": "Path to the AMPL binary. If empty, the extension will look for it in system paths.",
-						"title": "Path to AMPL Binary"
+						"title": "Path to AMPL Binary",
+						"scope": "machine"
 					},
 					"AMPL.Runtime.pathToJRE": {
 						"type": "string",
 						"default": "",
 						"description": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.",
 						"title": "Path to JRE",
-						"markdownDescription": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.\n\n- [Check Configuration](command:AMPL.checkLanguageServerConfiguration)\n- [Autodetect Java](command:AMPL.autotedectJava)\n- [Select Java Folder](command:AMPL.selectJavaFolder)"
+						"markdownDescription": "Path to the Java Runtime Environment (min Java 11). If empty, the extension will look in the environment variable JAVA_HOME and then in the system paths.\n\n- [Check Configuration](command:AMPL.checkLanguageServerConfiguration)\n- [Autodetect Java](command:AMPL.autotedectJava)\n- [Select Java Folder](command:AMPL.selectJavaFolder)",
+						"scope": "machine"
 					},
 					"AMPL.Runtime.changeDirectoryOnRun": {
 						"type": "boolean",

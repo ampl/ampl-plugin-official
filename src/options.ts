@@ -10,12 +10,12 @@ export function setPathToJRE(value?: string | null): Thenable<void> {
     return vscode.workspace.getConfiguration(SECTION).update("Runtime.pathToJRE", value, vscode.ConfigurationTarget.Global);
 }
 
-// --- pathToAMPLbinary ---
-export function getPathToAMPLbinary(): string | undefined {
-    return vscode.workspace.getConfiguration(SECTION).get<string>("Runtime.pathToAMPLbinary");
+// --- pathToAMPLBinary ---
+export function getpathToAMPLBinary(): string | undefined {
+    return vscode.workspace.getConfiguration(SECTION).get<string>("Runtime.pathToAMPLBinary");
 }
-export function setPathToAMPLbinary(value?: string | null): Thenable<void> {
-    return vscode.workspace.getConfiguration(SECTION).update("Runtime.pathToAMPLbinary", value, vscode.ConfigurationTarget.Global);
+export function setpathToAMPLBinary(value?: string | null): Thenable<void> {
+    return vscode.workspace.getConfiguration(SECTION).update("Runtime.pathToAMPLBinary", value, vscode.ConfigurationTarget.Global);
 }
 
 // --- diagnosticsEnabled ---
