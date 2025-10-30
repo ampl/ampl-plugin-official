@@ -62,6 +62,42 @@ async function findExecutable(exename: string): Promise<string | undefined> {
  * @returns The path to the AMPL binary if found, otherwise undefined.
  */
 export async function findAmplBinary(): Promise<string | undefined> {
+    // First, honor BASE_AMPL_PATH environment variable if provided.
+    // If it points to an existing file, use it. If it points to a directory,
+    // look for the ampl executable inside that directory.
+    const envBase = process.env.BASE_AMPL_PATH;
+    const amplExeName = os.platform() === 'win32' ? 'ampl.exe' : 'ampl';
+
+    if (envBase) {
+        console.log(`[ampl-plugin] BASE_AMPL_PATH is set: ${envBase}`);
+        // If envBase is a path to an existing file, return it.
+        try {
+            try {
+                if (await vscode.workspace.fs.stat(vscode.Uri.file(envBase))) {
+                    console.log(`[ampl-plugin] Using AMPL from BASE_AMPL_PATH (file): ${envBase}`);
+                    return envBase;
+                }
+            } catch {
+                // Not a file — continue to check as a directory
+            }
+
+            // Treat envBase as a directory and check for the executable inside it
+            const candidate = path.join(envBase, amplExeName);
+            try {
+                if (await vscode.workspace.fs.stat(vscode.Uri.file(candidate))) {
+                    console.log(`[ampl-plugin] Using AMPL from BASE_AMPL_PATH (dir): ${candidate}`);
+                    return candidate;
+                }
+            } catch {
+                // Not found in envBase — continue to fallback behavior
+                console.log(`[ampl-plugin] AMPL not found in BASE_AMPL_PATH: checked ${envBase} and ${candidate}`);
+            }
+        } catch (err) {
+            // Ignore and fall back to system lookup
+            console.error('Error while checking BASE_AMPL_PATH:', err);
+        }
+    }
+
     const amplBinary = await findExecutable('ampl');
     if (!amplBinary) {
         const errorText = "AMPL executable not found. Please set " +
