@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0]
 
 ### Changed
-- Bug fixes
+- `AMPL: Run file` command in the File Explorer context menu now runs the file being clicked [*Eric-Sirbu*]
+- Bug fixes 
 
 
 ## [0.2.9]

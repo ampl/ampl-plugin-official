@@ -121,8 +121,13 @@ function sendCommandToTerminal(command : string): void {
     }
 
 }
-function runFile(): void {
-    runFileWithTerminal();
+
+function runFile(uri?: vscode.Uri): void {
+    if (uri) {
+        runFileWithTerminal(uri.fsPath);
+    } else {
+        runFileWithTerminal();
+    }
 }
 
 export function runFileWithTerminal(filePath?: string): void {
