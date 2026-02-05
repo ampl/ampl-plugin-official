@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 const SECTION = "AMPL";
 
 // --- pathToJRE ---
-export function getPathToJRE(): string | undefined {
+export function getPathToJRE() : string | undefined {
     return vscode.workspace.getConfiguration(SECTION).get<string>("Runtime.pathToJRE");
 }
 export function setPathToJRE(value?: string | null): Thenable<void> {

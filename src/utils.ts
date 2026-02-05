@@ -12,7 +12,102 @@ let javaPath: string | undefined = undefined;
  */
 export async function initializeAmplPath(): Promise<void> {
     amplPath = options.getpathToAMPLBinary() || await findAmplBinary();
+    if (amplPath) {
+        const probeResult = await probeAmplBinary(amplPath);
+        if (!probeResult.success){
+            let errorText = `Failed to execute AMPL binary at ${amplPath}: ${probeResult.errorMessage}. Do you want to select a new binary?`
+  
+
+            vscode.window.showErrorMessage(errorText, "Yes", "No").then(async (value) => {
+            if (value === "Yes") {
+                const selectedFiles = await vscode.window.showOpenDialog({
+                    canSelectFiles: true,
+                    canSelectMany: false,
+                    canSelectFolders: false,
+                    openLabel: "Select AMPL binary",
+                    filters: { 'Executables': [os.platform() === 'win32' ? 'exe' : ''] } // Add more extensions if needed
+                });
+
+                if (selectedFiles && selectedFiles.length > 0) {
+                    const selectedPath = selectedFiles[0].fsPath;
+
+                    // Save the selected path to the settings
+                    await options.setpathToAMPLBinary(selectedPath);
+                    await initializeAmplPath();
+                    vscode.window.showInformationMessage(`Selected AMPL binary saved: ${selectedPath}`);
+                    return selectedPath;
+                } else {
+                    vscode.window.showWarningMessage("No file selected. Please set the path manually in the settings.");
+                }
+            }
+        });
+        }
+
+        console.log('[ampl-plugin] AMPL probe result:', probeResult);
+    }
 }
+
+
+export interface AmplProbeResult {
+    success: boolean;
+    stdout: string;
+    stderr: string;
+    exitCode: number | null;
+    errorMessage?: string;
+}
+
+export async function probeAmplBinary(
+    binaryPath?: string,
+    timeoutMs: number = 5000
+): Promise<AmplProbeResult> {
+    const resolvedPath = binaryPath;
+
+    if (!resolvedPath) {
+        throw new Error('AMPL binary path is not set. Call initializeAmplPath() first or pass a path explicitly.');
+    }
+
+    return await new Promise<AmplProbeResult>((resolve) => {
+        const child = spawn(resolvedPath, ['-vvq']);
+        let stdout = '';
+        let stderr = '';
+        let settled = false;
+        let timer: NodeJS.Timeout;
+
+        const finish = (result: AmplProbeResult) => {
+            if (settled) { return; }
+            settled = true;
+            clearTimeout(timer);
+            resolve(result);
+        };
+
+        timer = setTimeout(() => {
+            child.kill();
+            finish({ success: false, stdout, stderr, exitCode: null, errorMessage: `AMPL probe timed out after ${timeoutMs} ms.` });
+        }, timeoutMs);
+
+        if (child.stdout) {
+            child.stdout.on('data', (data: Buffer) => {
+                stdout += data.toString();
+            });
+        }
+
+        if (child.stderr) {
+            child.stderr.on('data', (data: Buffer) => {
+                stderr += data.toString();
+            });
+        }
+
+        child.on('error', (error: Error) => {
+            finish({ success: false, stdout, stderr, exitCode: null, errorMessage: error.message });
+        });
+
+        child.on('close', (code: number | null) => {
+            finish({ success: code === 0, stdout, stderr, exitCode: code, errorMessage: code === 0 ? undefined : 'AMPL process exited with a non-zero code.' });
+        });
+    });
+}
+
+
 
 /**
  * Initializes the Java path and stores it in a global variable.
@@ -118,7 +213,8 @@ export async function findAmplBinary(): Promise<string | undefined> {
                     const selectedPath = selectedFiles[0].fsPath;
 
                     // Save the selected path to the settings
-                    options.setpathToAMPLBinary(selectedPath);
+                    await options.setpathToAMPLBinary(selectedPath);
+                    initializeAmplPath();
 
                     vscode.window.showInformationMessage(`Selected AMPL binary saved: ${selectedPath}`);
                     return selectedPath;
@@ -130,6 +226,7 @@ export async function findAmplBinary(): Promise<string | undefined> {
     }
     return amplBinary;
 }
+
 
 /**
  * Finds the Java executable by checking various locations.
@@ -194,7 +291,7 @@ export async function findJava(amplPath: string | undefined): Promise<string | u
         const selectedPath = selectedFiles[0].fsPath;
 
         // Save the selected path to the settings
-        options.setPathToJRE(selectedPath);
+        await options.setPathToJRE(selectedPath);
 
         vscode.window.showInformationMessage(`Selected Java executable saved: ${selectedPath}`);
         return selectedPath;
@@ -404,7 +501,7 @@ export async function selectJavaFolder() {
         
             if (selectedFolder && selectedFolder.length > 0) {
                 const javaBin = path.join(selectedFolder[0].fsPath, 'bin', 'java');
-                options.setPathToJRE(javaBin);
+                await options.setPathToJRE(javaBin);
                 vscode.window.showInformationMessage(`Java Runtime set to: ${javaBin}`);
                 // Force refresh of the settings UI
                 await vscode.commands.executeCommand('workbench.action.openSettings', '@ext:AMPLOptimizationInc.ampl-plugin-official');
@@ -416,11 +513,11 @@ export async function selectJavaFolder() {
         }
 
 export async function autoDetectJavaPath() {
-    options.setPathToJRE();
+     await options.setPathToJRE();
      await initializeJavaPath(true); // Implement logic to autodetect Java
             const javaBin = getJavaPath();
             if (javaBin) {
-                options.setPathToJRE(javaBin);
+                await options.setPathToJRE(javaBin);
                 vscode.window.showInformationMessage(`Java Runtime detected and set to: ${javaBin}`);
                 // Force refresh of the settings UI
                 await vscode.commands.executeCommand('workbench.action.openSettings', '@ext:AMPLOptimizationInc.ampl-plugin-official');
