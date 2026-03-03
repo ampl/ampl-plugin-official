@@ -1,9 +1,12 @@
 /**
  * LaTeX-to-Unicode symbol mappings for AMPL.
  *
- * Curated subset focused on mathematical optimization:
- * Greek letters, subscripts, superscripts, math operators,
- * set theory, arrows, and miscellaneous math symbols.
+ * Curated subset: Greek letters, subscripts, superscripts,
+ * calculus symbols, and blackboard bold.
+ *
+ * Operators (math, set, logic, arrows) are excluded because
+ * AMPL does not support them natively — adding them would
+ * require a translation layer to map to AMPL equivalents.
  */
 export const latexSymbols: Record<string, string> = {
     // Greek lowercase
@@ -146,98 +149,6 @@ export const latexSymbols: Record<string, string> = {
     '\\^y': 'ʸ',
     '\\^z': 'ᶻ',
 
-    // Math operators
-    '\\sum': '∑',
-    '\\prod': '∏',
-    '\\coprod': '∐',
-    '\\infty': '∞',
-    '\\leq': '≤',
-    '\\geq': '≥',
-    '\\neq': '≠',
-    '\\approx': '≈',
-    '\\equiv': '≡',
-    '\\pm': '±',
-    '\\mp': '∓',
-    '\\times': '×',
-    '\\div': '÷',
-    '\\cdot': '·',
-    '\\star': '⋆',
-    '\\circ': '∘',
-    '\\bullet': '•',
-    '\\oplus': '⊕',
-    '\\ominus': '⊖',
-    '\\otimes': '⊗',
-    '\\oslash': '⊘',
-    '\\odot': '⊙',
-    '\\sqrt': '√',
-    '\\cbrt': '∛',
-    '\\lfloor': '⌊',
-    '\\rfloor': '⌋',
-    '\\lceil': '⌈',
-    '\\rceil': '⌉',
-    '\\langle': '⟨',
-    '\\rangle': '⟩',
-
-    // Comparison / ordering
-    '\\ll': '≪',
-    '\\gg': '≫',
-    '\\le': '≤',
-    '\\ge': '≥',
-    '\\ne': '≠',
-    '\\sim': '∼',
-    '\\simeq': '≃',
-    '\\cong': '≅',
-    '\\propto': '∝',
-    '\\prec': '≺',
-    '\\succ': '≻',
-    '\\preceq': '≼',
-    '\\succeq': '≽',
-
-    // Set theory
-    '\\in': '∈',
-    '\\notin': '∉',
-    '\\ni': '∋',
-    '\\subset': '⊂',
-    '\\supset': '⊃',
-    '\\subseteq': '⊆',
-    '\\supseteq': '⊇',
-    '\\cup': '∪',
-    '\\cap': '∩',
-    '\\emptyset': '∅',
-    '\\varnothing': '∅',
-    '\\setminus': '∖',
-
-    // Logic
-    '\\forall': '∀',
-    '\\exists': '∃',
-    '\\nexists': '∄',
-    '\\neg': '¬',
-    '\\land': '∧',
-    '\\lor': '∨',
-    '\\top': '⊤',
-    '\\bot': '⊥',
-    '\\vdash': '⊢',
-    '\\models': '⊧',
-
-    // Arrows
-    '\\rightarrow': '→',
-    '\\leftarrow': '←',
-    '\\uparrow': '↑',
-    '\\downarrow': '↓',
-    '\\leftrightarrow': '↔',
-    '\\Rightarrow': '⇒',
-    '\\Leftarrow': '⇐',
-    '\\Uparrow': '⇑',
-    '\\Downarrow': '⇓',
-    '\\Leftrightarrow': '⇔',
-    '\\mapsto': '↦',
-    '\\to': '→',
-    '\\implies': '⟹',
-    '\\iff': '⟺',
-    '\\longmapsto': '⟼',
-    '\\hookleftarrow': '↩',
-    '\\hookrightarrow': '↪',
-
     // Calculus / analysis
     '\\partial': '∂',
     '\\nabla': '∇',
@@ -245,21 +156,6 @@ export const latexSymbols: Record<string, string> = {
     '\\iint': '∬',
     '\\iiint': '∭',
     '\\oint': '∮',
-
-    // Miscellaneous math
-    '\\degree': '°',
-    '\\prime': '′',
-    '\\dprime': '″',
-    '\\ellipsis': '…',
-    '\\cdots': '⋯',
-    '\\vdots': '⋮',
-    '\\ddots': '⋱',
-    '\\hbar': 'ℏ',
-    '\\ell': 'ℓ',
-    '\\wp': '℘',
-    '\\Re': 'ℜ',
-    '\\Im': 'ℑ',
-    '\\aleph': 'ℵ',
 
     // Blackboard bold (double-struck)
     '\\bbA': '𝔸',
