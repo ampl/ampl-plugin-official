@@ -28,13 +28,9 @@ export class UnicodeCompletionProvider implements vscode.CompletionItemProvider 
             return [];
         }
         const range = wordRange.with(undefined, position);
-        return this.completionItems.map((item) => {
-            const clone = new vscode.CompletionItem(item.label, item.kind);
-            clone.insertText = item.insertText;
-            clone.detail = item.detail;
-            clone.filterText = item.filterText;
-            clone.range = range;
-            return clone;
-        });
+        for (const item of this.completionItems) {
+            item.range = range;
+        }
+        return this.completionItems;
     }
 }
