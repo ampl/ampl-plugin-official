@@ -10,6 +10,8 @@ import { registerRunCommands, runFileWithTerminal } from './commands';
 import * as options from './options';
 import { registerLMCommands } from './lmconvert';
 import { integer, LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient/node';
+import { UnicodeCompletionProvider } from './unicodeCompletionProvider';
+import { latexSymbols } from './unicodeCompletions';
 
 // Minimal Debug Adapter to map Run/Run Without Debugging to AMPL.runFile (root file)
 class AmplDebugAdapterDescriptorFactory implements vscode.DebugAdapterDescriptorFactory {
@@ -147,7 +149,16 @@ async function initializeExtension(context: vscode.ExtensionContext) {
 
         // Register commands and other features
         registerCommands(context);
-       
+
+        // Register LaTeX-to-Unicode completion provider
+        const unicodeProvider = new UnicodeCompletionProvider(latexSymbols);
+        context.subscriptions.push(
+            vscode.languages.registerCompletionItemProvider(
+                [{ language: 'ampl' }, { language: 'ampl-dat' }],
+                unicodeProvider,
+                '\\'
+            )
+        );
 
         registerRunCommands(context);
         // Handle advanced commands configuration
