@@ -5,6 +5,13 @@ All notable changes to the AMPL official plugin for VS code are documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.3]
+
+### Added
+- Added Latex-to-unicode character autocomplete [*eduardosalaz*]
+
+### Fixed
+- On Windows, the AMPL terminal uses codepage `65001` to properly display Unicode characters
 
 ## [0.3.2]
 
