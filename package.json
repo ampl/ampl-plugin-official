@@ -2,8 +2,8 @@
 	"name": "ampl-plugin-official",
 	"displayName": "AMPL (Official)",
 	"publisher": "AMPLOptimizationInc",
-	"description": "AMPL Language Support with Language Server",
-	"version": "0.3.3",
+	"description": "Official AMPL language support (syntax highlighting, code browsing and more)",
+	"version": "0.3.4",
 	"engines": {
 		"vscode": "^1.90.0"
 	},

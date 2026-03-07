@@ -13,19 +13,23 @@ Enjoy full syntax highlighting for `.mod`, `.run`, and `.dat` files. Note that h
 
 ![Syntax Highlighting](resources/syntax-highlight.png)
 
+
+### 2. Autocomplete
+Autocomplete for AMPL entities and for mathematical symbols `\alpha<Tab>` → `α`.
+
 ---
 
-### 2. Run AMPL Files
+### 3. Run AMPL Files
 Quickly run `.mod` or `.run` files directly from the editor.
 
 ![Run Files](resources/run-file.png)
 
 
-### 3. Display entities and expressions
+### 4. Display entities and expressions
 Select any entity or expression in the editor to display them in the AMPL runtime.
 
 
-### 4. Streamlined keyboard shortcuts
+### 5. Streamlined keyboard shortcuts
 Most used AMPL commands have keyboard shortcuts and can be accessed by the command palette:
 - `run` - send current file to AMPL 
 - `reset` - reset the current session
