@@ -272,7 +272,7 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
         documentSelector: [{ scheme: 'file', language: 'ampl' }],
         middleware: {
             provideDocumentFormattingEdits: (document, options, token, next) => {
-                return next(document, options, token);
+                return undefined;  //next(document, options, token);
             },
             provideDocumentRangeFormattingEdits: (document, range, options, token, next) => {
                 return undefined;
