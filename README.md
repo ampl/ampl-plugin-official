@@ -62,6 +62,23 @@ Errors are higlighted and listed in the "Problems" window in VS code. Note that 
 
 ![Diagnostics](resources/diagnostics.png)
 
+### 5. Measure units
+Attach a physical unit to a declaration by wrapping it in brackets in the alias:
+```ampl
+param speed '[m/s]' >= 0;
+```
+The language server infers units through arithmetic expressions — `param derived = speed * speed;` is automatically recognized as `[m²/s²]` — shows the result on hover, and flags dimensionally inconsistent expressions (e.g. adding a length to a time) as warnings in the Problems window.
+
+Common SI units, major currencies (USD, EUR, GBP, JPY, CHF, CAD, AUD, CNY, including the `$ € £ ¥` symbols), and domain-specific units like the gas-industry decatherm (`Dth`) are recognized out of the box. Additional units can be defined per model with a `# @unit` comment pragma, and later pragmas can reuse units defined by earlier ones:
+```ampl
+# @unit USD
+# @unit therm = 105505585.262 J
+# @unit Dth = 10 therm
+```
+This feature can be turned off with the `AMPL.LanguageServer.measureUnitsEnabled` setting.
+
+![Measure Units](resources/measure_units.png)
+
 ---
 
 ## Keybindings
@@ -94,6 +111,7 @@ Errors are higlighted and listed in the "Problems" window in VS code. Note that 
 | `AMPL.LanguageServer.enableLanguageServer`    | Enable or disable the language server for AMPL files.                                             |
 | `AMPL.LanguageServer.trace.server`            | Trace the communication between VS Code and the AMPL language server.                             |
 | `AMPL.LanguageServer.diagnosticsEnabled`      | Enable or disable error highlighting for AMPL files. Requires the language server.                |
+| `AMPL.LanguageServer.measureUnitsEnabled`     | Enable or disable measure-unit inference and display (e.g. in hover) for AMPL files. Requires the language server. |
 | `AMPL.Advanced.enablePsuedoTerminal`          | Enable or disable the advanced pseudoterminal. Has more features but can be unstable.             |
 | `AMPL.Advanced.enableAdvancedCommands`        | Enable advanced and beta features like custom configuration and file selection commands.          |
 

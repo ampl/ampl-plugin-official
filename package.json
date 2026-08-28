@@ -3,7 +3,7 @@
 	"displayName": "AMPL (Official)",
 	"publisher": "AMPLOptimizationInc",
 	"description": "Official AMPL language support (syntax highlighting, code browsing and more)",
-	"version": "0.3.6",
+	"version": "0.3.7",
 	"engines": {
 		"vscode": "^1.90.0"
 	},
@@ -276,6 +276,11 @@
 						"type": "boolean",
 						"default": true,
 						"description": "Enable or disable error highlighting for AMPL files. Requires the language server."
+					},
+					"AMPL.LanguageServer.measureUnitsEnabled": {
+						"type": "boolean",
+						"default": true,
+						"description": "Enable or disable measure-unit inference and display (e.g. in hover) for AMPL files. Requires the language server."
 					}
 				}
 			},

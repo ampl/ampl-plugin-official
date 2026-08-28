@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+
+## [0.3.7]
+ 
+### New
+- Added experimental support for measure units validation, e.g. `var x 'm/s';
+
+### Fixed
+- Following include files chains would sometimes keep files open, making them impossible to delete
+
+
 ## [0.3.6]
  
 ### Fixed

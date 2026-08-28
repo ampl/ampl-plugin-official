@@ -225,6 +225,12 @@ function registerCommands(context: vscode.ExtensionContext) {
                 settings: { ampl: { diagnosticsEnabled: diagnosticsEnabledValue } }
             });
         }
+        if (e.affectsConfiguration("AMPL.LanguageServer.measureUnitsEnabled")) {
+            const measureUnitsEnabledValue = options.getMeasureUnitsEnabled();
+            client.sendNotification('workspace/didChangeConfiguration', {
+                settings: { ampl: { measureUnitsEnabled: measureUnitsEnabledValue } }
+            });
+        }
     });
 
     context.subscriptions.push(vscode.commands.registerCommand("AMPL.openConsole", getAmplConsole));
@@ -265,17 +271,16 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'ampl' }],
         middleware: {
-            provideDocumentFormattingEdits: () => {
-                // Disable document formatting
-                return undefined;
+            provideDocumentFormattingEdits: (document, options, token, next) => {
+                return next(document, options, token);
             },
-            provideDocumentRangeFormattingEdits: () => {
-                // Disable range formatting
+            provideDocumentRangeFormattingEdits: (document, range, options, token, next) => {
                 return undefined;
             }
         },
         initializationOptions: {
-            diagnosticsEnabled: options.getDiagnosticsEnabled()
+            diagnosticsEnabled: options.getDiagnosticsEnabled(),
+            measureUnitsEnabled: options.getMeasureUnitsEnabled()
         },
         synchronize: {
             configurationSection: 'ampl'

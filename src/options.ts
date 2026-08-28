@@ -26,6 +26,14 @@ export function setDiagnosticsEnabled(value?: boolean | null): Thenable<void> {
     return vscode.workspace.getConfiguration(SECTION).update("LanguageServer.diagnosticsEnabled", value, vscode.ConfigurationTarget.Global);
 }
 
+// --- measureUnitsEnabled ---
+export function getMeasureUnitsEnabled(): boolean {
+    return vscode.workspace.getConfiguration(SECTION).get<boolean>("LanguageServer.measureUnitsEnabled", true);
+}
+export function setMeasureUnitsEnabled(value?: boolean | null): Thenable<void> {
+    return vscode.workspace.getConfiguration(SECTION).update("LanguageServer.measureUnitsEnabled", value, vscode.ConfigurationTarget.Global);
+}
+
 
 
 // --- usePseudoTerminal ---
