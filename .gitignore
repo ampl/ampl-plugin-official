@@ -13,3 +13,4 @@ node_modules
 libs/jre
 /dist
 /jres
+/libs/ampl-lsp.exe

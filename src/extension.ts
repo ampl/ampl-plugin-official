@@ -108,7 +108,6 @@ async function checkForUpdates(context: vscode.ExtensionContext) {
 
   if (currentVersion !== previousVersion) {
     // Extension has just been updated (or first install)
-    // Force autodetection of JRE
     await onExtensionUpdated(previousVersion, currentVersion);
     await context.globalState.update("ampl-plugin-official-version", currentVersion);
   }
@@ -174,11 +173,6 @@ async function initializeExtension(context: vscode.ExtensionContext) {
 
 // Register commands for the extension
 function registerCommands(context: vscode.ExtensionContext) {
-    // Java and language server commands
-    context.subscriptions.push(vscode.commands.registerCommand('AMPL.autotedectJava', utils.autoDetectJavaPath));
-    context.subscriptions.push(vscode.commands.registerCommand('AMPL.selectJavaFolder', utils.selectJavaFolder));
-    context.subscriptions.push(vscode.commands.registerCommand('AMPL.checkLanguageServerConfiguration', utils.cmdCheckLanguageServerConfiguration));
-
     // Command to create launch.json
     context.subscriptions.push(vscode.commands.registerCommand('AMPL.createLaunchJson', createAmplLaunchJson));
 
@@ -203,9 +197,6 @@ function registerCommands(context: vscode.ExtensionContext) {
             client.sendNotification('workspace/didChangeConfiguration', {
                 settings: { ampl: { filesToParse: updatedFilesToParse } }
             });
-        }
-        if (e.affectsConfiguration("AMPL.Runtime.pathToJRE")) {
-            utils.resetJavaPath();
         }
         if (e.affectsConfiguration("AMPL.Advanced.enableAdvancedCommands")) {
             const advanced = options.getEnableAdvancedCommands();
@@ -235,19 +226,40 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
     outputChannel.appendLine("Starting language server...");
     const executableName = process.platform === 'win32' ? 'ampl-lsp.exe' : 'ampl-lsp';
     const bundledPath = path.join(context.extensionPath, 'libs', executableName);
-    const languageServerCommand = fs.existsSync(bundledPath) ? bundledPath : executableName;
-    outputChannel.appendLine(`Using language server executable: ${languageServerCommand}`);
 
-    const serverOptions: ServerOptions = {
-        run: {
-            command: languageServerCommand,
-            options: {}
-        },
-        debug: {
-            command: languageServerCommand,
-            options: {}
+    let serverOptions: ServerOptions;
+    if (fs.existsSync(bundledPath)) {
+        outputChannel.appendLine(`Using language server executable: ${bundledPath}`);
+        serverOptions = {
+            run: { command: bundledPath, options: {} },
+            debug: { command: bundledPath, options: {} }
+        };
+    } else {
+        // No native binary for this platform: fall back to the static,
+        // no-longer-maintained Java implementation bundled as libs/ampl-ls.jar.
+        const jarPath = path.join(context.extensionPath, 'libs', 'ampl-ls.jar');
+        if (!fs.existsSync(jarPath)) {
+            vscode.window.showErrorMessage(
+                `No AMPL language server is bundled for this platform (looked for ${bundledPath} and ${jarPath}).`
+            );
+            outputChannel.appendLine("No native binary or fallback jar found.");
+            return;
         }
-    };
+
+        const javaBin = await utils.findJavaForFallback();
+        if (!javaBin) {
+            vscode.window.showErrorMessage(
+                "This platform has no native AMPL language server; running the bundled fallback requires a Java runtime (11+) on JAVA_HOME or PATH."
+            );
+            outputChannel.appendLine("No Java runtime found for the fallback jar.");
+            return;
+        }
+
+        outputChannel.appendLine(`Using fallback language server: ${javaBin} -cp ${jarPath} amplls.StdioLauncher`);
+        const runOptions = { command: javaBin, args: ['-cp', jarPath, 'amplls.StdioLauncher'], options: {} };
+        serverOptions = { run: runOptions, debug: runOptions };
+    }
+    const languageServerCommand = serverOptions.run.command;
 
     const clientOptions: LanguageClientOptions = {
         documentSelector: [{ scheme: 'file', language: 'ampl' }],
