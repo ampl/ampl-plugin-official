@@ -123,28 +123,20 @@ async function onExtensionUpdated(
   } else {
     console.log(`Extension installed: ${newVersion}`);
   }
-  options.setPathToJRE(null);
-  utils.initializeJavaPath(true);
 }
 
 
 async function initializeExtension(context: vscode.ExtensionContext) {
-        // Initialize AMPL and Java paths
+    // Initialize the AMPL path.
         await utils.initializeAmplPath();
-        if (options.getUseLanguageServer()) await utils.initializeJavaPath();
 
         // Optionally log the paths for debugging
         const amplPath = utils.getAmplPath();
-        const javaPath = utils.getJavaPath();
         console.log(`AMPL Path: ${amplPath}`);
-        console.log(`Java Path: ${javaPath}`);
 
         // Check if paths are initialized properly
         if (!amplPath) {
             vscode.window.showErrorMessage("AMPL binary path could not be resolved. Some features may not work.");
-        }
-        if (!javaPath) {
-            vscode.window.showErrorMessage("Java Runtime Environment (JRE) path could not be resolved. Advanced features may not work.");
         }
 
         // Register commands and other features
@@ -241,29 +233,18 @@ function registerCommands(context: vscode.ExtensionContext) {
 async function activateLanguageServer(context: vscode.ExtensionContext) {
     const outputChannel = vscode.window.createOutputChannel("AMPL Language Server");
     outputChannel.appendLine("Starting language server...");
-    const classPath = path.join(__dirname, '..', 'libs', 'ampl-ls.jar');
-    const args: string[] = ['-cp', classPath, 'amplls.StdioLauncher'];
-
-    const javaBin = utils.getJavaPath();
-    if (!javaBin) {
-        vscode.window.showErrorMessage("Could not find Java. Advanced editor functionalities disabled.");
-        outputChannel.appendLine("Could not find Java. Advanced editor functionalities disabled.");
-        return;
-    }
-    if(!await utils.checkLanguageServerConfiguration(javaBin, classPath, outputChannel, true)) 
-        return;
-
-
+    const executableName = process.platform === 'win32' ? 'ampl-lsp.exe' : 'ampl-lsp';
+    const bundledPath = path.join(context.extensionPath, 'libs', executableName);
+    const languageServerCommand = fs.existsSync(bundledPath) ? bundledPath : executableName;
+    outputChannel.appendLine(`Using language server executable: ${languageServerCommand}`);
 
     const serverOptions: ServerOptions = {
         run: {
-            command: javaBin,
-            args: args,
+            command: languageServerCommand,
             options: {}
         },
         debug: {
-            command: javaBin,
-            args: args,
+            command: languageServerCommand,
             options: {}
         }
     };
@@ -296,7 +277,7 @@ async function activateLanguageServer(context: vscode.ExtensionContext) {
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
         vscode.window.showErrorMessage(
-            `Failed to start the language server. Java interpreter: ${javaBin}. Error: ${errorMessage}`
+            `Failed to start the language server executable (${languageServerCommand}). Error: ${errorMessage}`
         );
         outputChannel.appendLine(`Failed to start the language server. Error: ${errorMessage}`);
         return;
