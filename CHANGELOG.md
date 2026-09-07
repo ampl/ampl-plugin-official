@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [0.4.0]
+
+### Changed
+- Embedded language server is now native for all major platforms, no need for Java anymore. Unsupported platforms
+  can still use the Java language server if a JRE is installed.
+
+
 ## [0.3.7]
  
 ### New
-- Added experimental support for measure units validation, e.g. `var x 'm/s';
+- Added experimental support for measure units validation, e.g. `var x 'm/s'; see readme file
 
 ### Fixed
 - Following include files chains would sometimes keep files open, making them impossible to delete

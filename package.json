@@ -3,7 +3,7 @@
 	"displayName": "AMPL (Official)",
 	"publisher": "AMPLOptimizationInc",
 	"description": "Official AMPL language support (syntax highlighting, code browsing and more)",
-	"version": "0.3.7",
+	"version": "0.4.0",
 	"engines": {
 		"vscode": "^1.90.0"
 	},
